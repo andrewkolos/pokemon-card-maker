@@ -2,10 +2,12 @@ import React from 'react';
 import App from '../components/app';
 import Layout from '../components/layout';
 
-export default function Home() {
+const Home: React.FC = () => {
   return (
     <Layout>
       <App />
     </Layout>
   );
-}
+};
+
+export default Home;
