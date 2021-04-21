@@ -91,12 +91,6 @@ const Form: React.FC = () => {
 
       {cardType === CardType.Pokemon && (
         <FormControl className={classes.formControl}>
-          <TextField label="HP" type="number" onChange={(e) => setHp(e.target.value)}></TextField>
-        </FormControl>
-      )}
-
-      {cardType === CardType.Pokemon && (
-        <FormControl className={classes.formControl}>
           <InputLabel id="gx-select-label">GX</InputLabel>
           <Select labelId="gx-select-label" value={gx} onChange={(e) => setGx(e.target.value as any)}>
             <MenuItem value="gx">GX</MenuItem>
