@@ -1,6 +1,8 @@
 import { FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch, TextField } from '@material-ui/core';
+import { Autocomplete } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/styles';
 import React from 'react';
+import { hpList } from '../hp-list';
 import { CardType } from '../model/card-type';
 import { Stage } from '../model/stage';
 
@@ -74,6 +76,17 @@ const Form: React.FC = () => {
           control={<Switch checked={prismStar} onChange={(e) => setPrismStar(e.target.checked)} color="primary" />}
           label="Prism Star"
         />
+      )}
+
+      {cardType === CardType.Pokemon && (
+        <FormControl className={classes.formControl}>
+          <Autocomplete
+            id="combo-box-demo"
+            options={hpList}
+            renderInput={(params) => <TextField {...params} label="HP" variant="outlined" />}
+            onChange={(_, value) => setHp(value as any)}
+          />
+        </FormControl>
       )}
 
       {cardType === CardType.Pokemon && (
