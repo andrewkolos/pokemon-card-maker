@@ -7,6 +7,9 @@ import { makeStyles } from '@material-ui/styles';
 
 const useStyles = makeStyles({
   appBar: {
+    marginBottom: '10px',
+  },
+  appBarText: {
     display: 'inline',
     margin: 'auto',
   },
@@ -30,9 +33,9 @@ const Layout: React.FC = (props) => {
       <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
       <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
 
-      <AppBar position="static">
+      <AppBar position="static" className={classes.appBar}>
         <Toolbar>
-          <Typography className={classes.appBar} variant="h6">
+          <Typography className={classes.appBarText} variant="h6">
             Pokemon Card Maker
           </Typography>
         </Toolbar>
