@@ -1,6 +1,6 @@
 import React from 'react';
-import App from '../components/app';
-import Layout from '../components/layout';
+import App from '../src/components/app';
+import Layout from '../src/components/layout';
 
 const Home: React.FC = () => {
   return (
