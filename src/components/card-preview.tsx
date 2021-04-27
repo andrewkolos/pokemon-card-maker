@@ -9,7 +9,6 @@ const useStyles = makeStyles({
   container: {
     width: '400px',
     height: '700px',
-    backgroundColor: '#eeeeee',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',

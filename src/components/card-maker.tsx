@@ -7,11 +7,9 @@ import Form from './form';
 const useStyles = makeStyles({
   formContainer: {
     width: '600px',
-    backgroundColor: '#ffffff',
     overflow: 'hidden',
   },
   previewContainer: {
-    backgroundColor: '#dddddd',
     display: 'flex',
     justifyContent: 'center',
   },

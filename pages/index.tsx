@@ -1,13 +1,8 @@
 import React from 'react';
-import App from '../src/components/app';
-import Layout from '../src/components/layout';
+import App from '../src/components/card-maker';
 
 const Home: React.FC = () => {
-  return (
-    <Layout>
-      <App />
-    </Layout>
-  );
+  return <App />;
 };
 
 export default Home;
