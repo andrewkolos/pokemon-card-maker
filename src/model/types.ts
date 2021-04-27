@@ -5,51 +5,56 @@ export enum CardType {
 }
 
 enum Series {
-    SunMoon = "Sun & Moon",
-    SwordShield = "Sword & Shield"
+  SunMoon = "Sun & Moon",
+  SwordShield = "Sword & Shield"
 }
 
 type Card = CardBase & (PokemonCard | TrainerCard | EnergyCard);
 
-interface CardBase = {
+interface CardBase {
   // could also be declared as `interface` instead of `type` but there arent any differences that you would actually care about
   name: string;
   image: string;
   // ...anything else that *all* cards have goes here
 };
 
-enum PokemonType {
-    Fairy = "Fairy", // only XY and SunMoon
-    Colorless = "Colorless",
-    Lightning = "Lightning",
-    Dragon = "Dragon",
-    Metal = "Metal",
-    Fire = "Fire",
-    Water = "Water",
-    Grass = "Grass",
-    Psychic = "Psychic",
-    Darkness = "Darkness",
-    Fighting = "Fighting"
+export enum PokemonType {
+  Colorless = "colorless",
+  Darkness = "darkness",
+  Dragon = "dragon",
+  Fairy = "fairy", // only XY and SunMoon
+  Fighting = "fighting",
+  Fire = "fire",
+  Grass = "grass",
+  Lightning = "lightning",
+  Metal = "metal",
+  Psychic = "psychic",
+  Water = "water",
 }
 
 interface Attack {
-    damage?: number;
-    effectText?: string;
-    damageSign?: string;
-    name: string;
-    cost: PokemonType[];
+  damage?: number;
+  effectText?: string;
+  damageSign?: string;
+  name: string;
+  cost: PokemonType[];
+}
+
+export interface Ability {
+  name: string;
+  text: string;
 }
 
 interface PokemonCardBase extends CardBase {
   cardType: CardType.Pokemon; // This is the discriminator.
+  series: Series;
   pokemonType: PokemonType
   hp: number;
   weakness: string;
   resistance: string;
   retreatcost: number;
-  ability?: string;
+  ability?: Ability;
   attacks: Attack[];
-  series: Series; // this is some enum (we already have it)
   // anything that all pokemon cards have
 }
 
@@ -70,24 +75,24 @@ export type PokemonCard = SunMoonPokemonCard | SwordShieldPokemonCard;
 
 
 interface TrainerCard {
-    effect: string;
-    cardType: CardType.Trainer
-    trainerType: "Item" | "Tool" | "Stadium" | "Supporter";
+  effect: string;
+  cardType: CardType.Trainer
+  trainerType: "Item" | "Tool" | "Stadium" | "Supporter";
 
 }
 
 export interface SunMoonTrainerCard extends TrainerCard {
-    prismStar: boolean;
+  prismStar: boolean;
 
 }
 
 interface EnergyCard {
-    cardType: CardType.Energy
-    energyType: PokemonType
-    effect: string;
+  cardType: CardType.Energy
+  energyType: PokemonType
+  effect: string;
 }
 
-export interface SunMoonEnergyCard extends EnergyCard{
-    prismStar: boolean
+export interface SunMoonEnergyCard extends EnergyCard {
+  prismStar: boolean
 }
 // etc... go as many levels deep as possible
