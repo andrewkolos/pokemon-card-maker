@@ -1,29 +1,47 @@
-import { FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch, TextField } from '@material-ui/core';
-import { Autocomplete } from '@material-ui/lab';
-import { makeStyles } from '@material-ui/styles';
+import {
+  Checkbox,
+  FormControl,
+  FormControlLabel,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+  Theme,
+} from '@material-ui/core';
+import { createStyles, makeStyles } from '@material-ui/styles';
 import React from 'react';
-import { hpList } from '../hp-list';
 import { CardType } from '../model/card-type';
 import { Stage } from '../model/stage';
-import { Ability } from '../model/types';
+import { Ability, PokemonType } from '../model/types';
+import clsx from 'clsx';
 
-const useStyles = makeStyles({
-  root: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    margin: '10px',
-  },
-  break: {
-    flexBasis: '100%'
-  },
-  formControl: {
-    margin: '10px',
-    minWidth: 120,
-  },
-  flex1: {
-    flex: 1,
-  }
-});
+import { PokemonTypeSelect } from './pokemon-type-select';
+import { HpSelect } from '../hp';
+import { Attacks } from './attacks';
+import { CardImageSelector } from './card-image-selector';
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      display: 'flex',
+      flexWrap: 'wrap',
+      margin: theme.spacing(1),
+    },
+    break: {
+      flexBasis: '100%',
+    },
+    formControl: {
+      margin: theme.spacing(1),
+      minWidth: 120,
+    },
+    flex1: {
+      flex: 1,
+    },
+    abilityRow: {
+      minHeight: 60,
+    },
+  })
+);
 
 const Form: React.FC = () => {
   const classes = useStyles();
@@ -33,20 +51,20 @@ const Form: React.FC = () => {
   const [stage, setStage] = React.useState('');
   const [prismStar, setPrismStar] = React.useState(false);
   const [gx, setGx] = React.useState('');
-  const [pokemonType, setPokemonType] = React.useState('');
+  const [pokemonTypes, setPokemonTypes] = React.useState([] as PokemonType[]);
   const [name, setName] = React.useState('');
   const [hp, setHp] = React.useState('');
-  const [weaknesses, setWeaknesses] = React.useState([] as string[]);
-  const [resistances, setResistances] = React.useState([] as string[]);
+  const [weaknesses, setWeaknesses] = React.useState([] as PokemonType[]);
+  const [resistances, setResistances] = React.useState([] as PokemonType[]);
   const [retreatCost, setRetreatCost] = React.useState('');
   const [ability, setAbility] = React.useState<Partial<Ability>>({});
+  const [effect, setEffect] = React.useState('');
   const [attacks, setAttacks] = React.useState([] as string[]);
-  const [pokedexInfo, setPokedexInfo] = React.useState('');
-  const [flavorText, setFlavorText] = React.useState('');
   const [setNumber, setSetNumber] = React.useState('');
   const [rarity, setRarity] = React.useState('');
   const [imagePath, setImagePath] = React.useState('');
   const [hasAbility, setHasAbility] = React.useState(false);
+  const [imgBlob, setImgBlob] = React.useState<Blob>();
 
   return (
     <div className={classes.root}>
@@ -58,7 +76,6 @@ const Form: React.FC = () => {
           <MenuItem value="swordshield">Sword/Shield</MenuItem>
         </Select>
       </FormControl>
-
       <FormControl className={classes.formControl}>
         <InputLabel id="card-type-select-label">Card Type</InputLabel>
         <Select labelId="card-type-select-label" value={cardType} onChange={(e) => setCardType(e.target.value as any)}>
@@ -67,7 +84,6 @@ const Form: React.FC = () => {
           <MenuItem value="energy">Energy</MenuItem>
         </Select>
       </FormControl>
-
       {cardType === CardType.Pokemon && (
         <FormControl className={classes.formControl}>
           <InputLabel id="stage-select-label">Stage</InputLabel>
@@ -78,85 +94,48 @@ const Form: React.FC = () => {
           </Select>
         </FormControl>
       )}
-
       {cardType === CardType.Pokemon && stage === Stage.Basic && (
         <FormControlLabel
-          control={<Switch checked={prismStar} onChange={(e) => setPrismStar(e.target.checked)} color="primary" />}
+          control={<Checkbox checked={prismStar} onChange={(e) => setPrismStar(e.target.checked)} color="primary" />}
           label="Prism Star"
         />
       )}
-
       {cardType === CardType.Pokemon && (
-        <FormControl>
-          <InputLabel id="pokemon-type-select-label">Type</InputLabel>
-          <Select labelId="pokemon-type-select-label"
-          onChange={(e) => setPokemonType(e.target.value as string)}
-          value={pokemonType}>
-            <MenuItem value="colorless">Colorless</MenuItem>
-            <MenuItem value="darkness">Darkness</MenuItem>
-            <MenuItem value="dragon">Dragon</MenuItem>
-            <MenuItem value="fairy">Fairy</MenuItem>
-            <MenuItem value="fire">Fire</MenuItem>
-            <MenuItem value="fighting">Fighting</MenuItem>
-            <MenuItem value="grass">Grass</MenuItem>
-            <MenuItem value="lightning">Lightning</MenuItem>
-            <MenuItem value="metal">Metal</MenuItem>
-            <MenuItem value="psychic">Psychic</MenuItem>
-            <MenuItem value="water">Water</MenuItem>
-          </Select>
-        </FormControl>
+        <PokemonTypeSelect
+          className={classes.formControl}
+          label="Type"
+          multiple
+          value={pokemonTypes}
+          onValueChanged={(v) => setPokemonTypes(v)}
+        />
       )}
-
       {cardType === CardType.Pokemon && (
-        <FormControl>
-          <InputLabel id="pokemon-type-select-label">Resistance</InputLabel>
-          <Select labelId="pokemon-type-select-label"
-            onChange={(e) => setResistances([e.target.value as string])}
-            value={resistances[0]}>
-            <MenuItem value="none">None</MenuItem>
-            <MenuItem value="colorless">Colorless</MenuItem>
-            <MenuItem value="darkness">Darkness</MenuItem>
-            <MenuItem value="dragon">Dragon</MenuItem>
-            <MenuItem value="fairy">Fairy</MenuItem>
-            <MenuItem value="fire">Fire</MenuItem>
-            <MenuItem value="fighting">Fighting</MenuItem>
-            <MenuItem value="grass">Grass</MenuItem>
-            <MenuItem value="lightning">Lightning</MenuItem>
-            <MenuItem value="metal">Metal</MenuItem>
-            <MenuItem value="psychic">Psychic</MenuItem>
-            <MenuItem value="water">Water</MenuItem>
-          </Select>
-        </FormControl>
+        <PokemonTypeSelect
+          multiple
+          canPickNone
+          className={classes.formControl}
+          label="Resistances"
+          value={resistances}
+          onValueChanged={(v) => setResistances(v)}
+        />
       )}
-
       {cardType === CardType.Pokemon && (
-        <FormControl>
-          <InputLabel id="pokemon-type-select-label">Weakness</InputLabel>
-          <Select labelId="pokemon-type-select-label"
-          onChange={(e) => setWeaknesses([e.target.value as string])}
-          value={weaknesses[0]}>
-            <MenuItem value="none">None</MenuItem>
-            <MenuItem value="colorless">Colorless</MenuItem>
-            <MenuItem value="darkness">Darkness</MenuItem>
-            <MenuItem value="dragon">Dragon</MenuItem>
-            <MenuItem value="fairy">Fairy</MenuItem>
-            <MenuItem value="fire">Fire</MenuItem>
-            <MenuItem value="fighting">Fighting</MenuItem>
-            <MenuItem value="grass">Grass</MenuItem>
-            <MenuItem value="lightning">Lightning</MenuItem>
-            <MenuItem value="metal">Metal</MenuItem>
-            <MenuItem value="psychic">Psychic</MenuItem>
-            <MenuItem value="water">Water</MenuItem>
-          </Select>
-        </FormControl>
+        <PokemonTypeSelect
+          label="Weaknesses"
+          multiple
+          className={classes.formControl}
+          value={weaknesses}
+          onValueChanged={(v) => setWeaknesses(v)}
+        />
       )}
-
       {cardType === CardType.Pokemon && (
-        <FormControl>
+        <FormControl className={classes.formControl}>
           <InputLabel id="retreat-cost-select-label">Retreat Cost</InputLabel>
-          <Select labelId="retreat-cost-select-label"
+          <Select
+            labelId="retreat-cost-select-label"
             value={retreatCost}
-            onChange={(e) => setRetreatCost(e.target.value as string)}>
+            onChange={(e) => setRetreatCost(e.target.value as string)}
+          >
             <MenuItem value="0">None</MenuItem>
             <MenuItem value="1">1</MenuItem>
             <MenuItem value="2">2</MenuItem>
@@ -166,19 +145,9 @@ const Form: React.FC = () => {
           </Select>
         </FormControl>
       )}
-
       {cardType === CardType.Pokemon && (
-        <FormControl className={classes.formControl}>
-          <Autocomplete
-            id="combo-box-demo"
-            options={hpList}
-            renderInput={(params) => <TextField {...params} label="HP" variant="outlined" />}
-            onChange={(_, value) => setHp(value as any)}
-            value={hp}
-          />
-        </FormControl>
+        <HpSelect label="HP" onChange={(v) => setHp(v)} className={classes.formControl} />
       )}
-
       {cardType === CardType.Pokemon && (
         <FormControl className={classes.formControl}>
           <InputLabel id="gx-select-label">GX</InputLabel>
@@ -190,34 +159,63 @@ const Form: React.FC = () => {
         </FormControl>
       )}
 
-      <div className="break"></div>
-      
       {cardType === CardType.Pokemon && (
-        <FormControl className={classes.formControl}>
-          <InputLabel id="has-ability-select-label">Has ability?</InputLabel>
-          <Select value={hasAbility ? 'yes' : 'no'} labelId="has-ability-select-label">
-            <MenuItem value="no">No</MenuItem>
-            <MenuItem value="yes">Yes</MenuItem>
-          </Select>
-        </FormControl>
-      )}
-
-      {cardType === CardType.Pokemon && hasAbility && (
         <React.Fragment>
-          <TextField className={classes.formControl} label="Ability name" value={ability.name}
-          onChange={(e) => setAbility({...ability, name: e.target.value})} />
+          <div className={clsx(classes.break)}></div>
+          <FormControlLabel
+            className={clsx(classes.formControl, classes.abilityRow)}
+            control={
+              <Checkbox checked={hasAbility} onChange={(e) => setHasAbility(e.target.checked)} color="primary" />
+            }
+            label="Has ability"
+          />
+        </React.Fragment>
+      )}
+      {cardType === CardType.Pokemon && (
+        <React.Fragment>
+          <FormControl className={classes.formControl}>
+            <TextField
+              disabled={!hasAbility}
+              label="Ability name"
+              value={ability.name}
+              onChange={(e) => setAbility({ ...ability, name: e.target.value })}
+            />
+          </FormControl>
           <TextField
             className={`${classes.formControl} ${classes.flex1}`}
+            disabled={!hasAbility}
             id="outlined-multiline-flexible"
             label="Ability text"
             multiline
-            rowsMax={2}
             value={ability.text}
-            onChange={(e) => setAbility({...ability, text: e.target.value})}
-            variant="outlined"
+            onChange={(e) => setAbility({ ...ability, text: e.target.value })}
           />
         </React.Fragment>
-      )};
+      )}
+
+      <div className={classes.break}></div>
+
+      {cardType === CardType.Pokemon && <Attacks className={classes.formControl} pokemonHasAbility={hasAbility} />}
+
+      <div className={classes.break}></div>
+
+      {cardType !== CardType.Pokemon && (
+        <TextField
+          className={clsx(classes.formControl, classes.flex1)}
+          label="Card text"
+          value={effect}
+          onChange={(e) => setEffect(e.target.value)}
+          multiline
+          variant="outlined"
+        />
+      )}
+
+      <CardImageSelector
+        className={classes.formControl}
+        cardImageHeight={1038}
+        cardImageWidth={747}
+        onComplete={(imageBlob) => setImgBlob(imageBlob)}
+      />
     </div>
   );
 };

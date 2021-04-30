@@ -31,6 +31,8 @@ const useStyles = makeStyles({
   },
 });
 
+const darkModeStorageKey = 'dark_mode';
+
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
 
@@ -41,7 +43,12 @@ export default function App(props: AppProps) {
       jssStyles.parentElement?.removeChild(jssStyles);
     }
   }, []);
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState<boolean>(
+    (() => {
+      const cache = typeof window === 'undefined' ? false : localStorage.getItem(darkModeStorageKey);
+      return Boolean(cache) ?? false;
+    })()
+  );
 
   const theme = createMuiTheme({
     palette: {
@@ -62,7 +69,13 @@ export default function App(props: AppProps) {
           <Typography className={classes.appBarText} variant="h6">
             Pokemon Card Maker
           </Typography>
-          <div className={classes.darkModeToggleButton} onClick={() => setDarkMode(!darkMode)}>
+          <div
+            className={classes.darkModeToggleButton}
+            onClick={() => {
+              setDarkMode(!darkMode);
+              localStorage.setItem(darkModeStorageKey, String(!darkMode));
+            }}
+          >
             {darkMode ? <WeatherNight /> : <WhiteBalanceSunny />}
           </div>
         </Toolbar>

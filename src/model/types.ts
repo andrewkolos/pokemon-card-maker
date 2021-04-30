@@ -32,10 +32,16 @@ export enum PokemonType {
   Water = "water",
 }
 
-interface Attack {
+export enum DamageSign {
+  Plus = '+',
+  Hyphen = '-',
+  Cross = 'x',
+}
+
+export interface Attack {
   damage?: number;
   effectText?: string;
-  damageSign?: string;
+  damageSign?: DamageSign;
   name: string;
   cost: PokemonType[];
 }

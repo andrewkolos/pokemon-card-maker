@@ -6,7 +6,7 @@ import Form from './form';
 
 const useStyles = makeStyles({
   formContainer: {
-    width: '600px',
+    width: '700px',
     overflow: 'hidden',
   },
   previewContainer: {
@@ -23,7 +23,7 @@ const useStyles = makeStyles({
   },
 });
 
-const App: React.FC = () => {
+export const CardMaker: React.FC = () => {
   const classes = useStyles();
 
   return (
@@ -39,5 +39,3 @@ const App: React.FC = () => {
     </Container>
   );
 };
-
-export default App;

@@ -1,8 +1,8 @@
 import React from 'react';
-import App from '../src/components/card-maker';
+import { CardMaker } from '../src/components/card-maker';
 
 const Home: React.FC = () => {
-  return <App />;
+  return <CardMaker />;
 };
 
 export default Home;

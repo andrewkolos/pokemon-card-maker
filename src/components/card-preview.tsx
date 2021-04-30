@@ -4,11 +4,11 @@ import { makeStyles } from '@material-ui/styles';
 import React, { useState } from 'react';
 import CardRenderer from './card-rendering/card-renderer';
 import { saveAs } from 'file-saver';
+import { FileCopy, Save } from '@material-ui/icons';
 
 const useStyles = makeStyles({
   container: {
     width: '400px',
-    height: '700px',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -59,6 +59,7 @@ const CardPreview: React.FC = () => {
           variant="contained"
           color="primary"
           onClick={() => onCopyToClipBoardButtonClicked()}
+          startIcon={<FileCopy />}
         >
           Copy To Clipboard
         </Button>
@@ -67,6 +68,7 @@ const CardPreview: React.FC = () => {
           variant="contained"
           color="primary"
           onClick={() => onSaveButtonClicked()}
+          startIcon={<Save />}
         >
           Save
         </Button>
