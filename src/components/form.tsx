@@ -20,6 +20,8 @@ import { HpSelect } from '../hp';
 import { Attacks } from './attacks';
 import { CardImageSelector } from './card-image-selector';
 import { arrayify } from '../arrayify';
+import { NoMeetingRoom } from '@material-ui/icons';
+import { Series } from '../model/series';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -70,9 +72,31 @@ const Form: React.FC<FormProps> = (props) => {
   const [imagePath, setImagePath] = React.useState('');
   const [hasAbility, setHasAbility] = React.useState(false);
   const [imgDataUrl, setImgDataUrl] = React.useState<string>();
+  const [trainerType, setTrainerType] = React.useState('');
 
   useEffect(() => {
-    props.onChange({} as any);
+    props.onChange({
+      series,
+      cardType,
+      stage,
+      prismStar,
+      gx,
+      pokemonType,
+      name,
+      hp,
+      weaknesses,
+      resistances,
+      retreatCost,
+      ability,
+      effect,
+      attacks,
+      setNumber,
+      rarity,
+      imagePath,
+      hasAbility,
+      imgDataUrl,
+      image: imgDataUrl,
+    } as any);
   }, [
     series,
     cardType,
@@ -120,6 +144,32 @@ const Form: React.FC<FormProps> = (props) => {
           <MenuItem value="energy">Energy</MenuItem>
         </Select>
       </FormControl>
+
+      <TextField className={classes.formControl} label="Name" onChange={(v) => setName(v.target.value)} value={name} />
+
+      {cardType === CardType.Trainer && (
+        <FormControl className={classes.formControl}>
+          <InputLabel id="trainertype-select-label">Trainer Type</InputLabel>
+          <Select
+            labelId="trainertype-select-label"
+            value={trainerType}
+            onChange={(e) => setTrainerType(e.target.value as any)}
+          >
+            <MenuItem value="Item">Item</MenuItem>
+            <MenuItem value="Stadium">Stadium</MenuItem>
+            <MenuItem value="Supporter">Supporter</MenuItem>
+            <MenuItem value="Tool">Tool</MenuItem>
+          </Select>
+        </FormControl>
+      )}
+
+      {cardType === CardType.Trainer && trainerType === 'Supporter' && series === Series.SunMoon && (
+        <FormControlLabel
+          control={<Checkbox checked={prismStar} onChange={(e) => setPrismStar(e.target.checked)} color="primary" />}
+          label="Prism Star"
+        />
+      )}
+
       {cardType === CardType.Pokemon && (
         <FormControl className={classes.formControl}>
           <InputLabel id="stage-select-label">Stage</InputLabel>
@@ -130,6 +180,7 @@ const Form: React.FC<FormProps> = (props) => {
           </Select>
         </FormControl>
       )}
+
       {cardType === CardType.Pokemon && stage === Stage.Basic && (
         <FormControlLabel
           control={<Checkbox checked={prismStar} onChange={(e) => setPrismStar(e.target.checked)} color="primary" />}

@@ -9,12 +9,13 @@ enum Series {
   SwordShield = "Sword & Shield"
 }
 
-export type Card = CardBase & (PokemonCard | TrainerCard | EnergyCard);
+export type Card = (PokemonCard | TrainerCard | EnergyCard);
 
 interface CardBase {
   // could also be declared as `interface` instead of `type` but there arent any differences that you would actually care about
   name: string;
   image: string;
+  fullArt: boolean;
   // ...anything else that *all* cards have goes here
 };
 
@@ -80,7 +81,7 @@ interface SwordShieldPokemonCard {
 export type PokemonCard = SunMoonPokemonCard | SwordShieldPokemonCard;
 
 
-interface TrainerCard {
+export interface TrainerCard extends CardBase {
   effect: string;
   cardType: CardType.Trainer
   trainerType: "Item" | "Tool" | "Stadium" | "Supporter";
@@ -92,7 +93,7 @@ export interface SunMoonTrainerCard extends TrainerCard {
 
 }
 
-interface EnergyCard {
+interface EnergyCard extends CardBase {
   cardType: CardType.Energy
   energyType: PokemonType
   effect: string;
