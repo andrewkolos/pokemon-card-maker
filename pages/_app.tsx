@@ -8,6 +8,8 @@ import { AppBar, Toolbar, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import { WeatherNight, WhiteBalanceSunny } from 'mdi-material-ui';
 
+import './fonts.scss';
+
 const useStyles = makeStyles({
   appBar: {
     marginBottom: '10px',
@@ -19,6 +21,7 @@ const useStyles = makeStyles({
   appBarText: {
     display: 'inline',
     margin: 'auto',
+    fontFamily: 'FuturaStd',
   },
   footer: {
     marginTop: '3rem',
