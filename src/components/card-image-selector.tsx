@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import ReactCrop from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
+import { resizeImage } from './resize-image';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -234,21 +235,6 @@ function getImgDimensions(dataUri: string): Promise<Dimension> {
         width: img.width,
         height: img.height,
       });
-    };
-    img.src = dataUri;
-  });
-}
-
-function resizeImage(dataUri: string, width: number, height: number) {
-  return new Promise<string>((resolve) => {
-    const img = new Image();
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d')!;
-      canvas.width = width;
-      canvas.height = height;
-      ctx.drawImage(img, 0, 0, width, height);
-      resolve(canvas.toDataURL());
     };
     img.src = dataUri;
   });

@@ -1,10 +1,11 @@
 import { Button, Snackbar } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/styles';
-import React, { useState } from 'react';
-import CardRenderer from './card-rendering/card-renderer';
+import React, { useEffect, useState } from 'react';
+import { renderCard } from './card-rendering/render-card';
 import { saveAs } from 'file-saver';
 import { FileCopy, Save } from '@material-ui/icons';
+import { convertDataURLToBlob } from '@barusu/util-blob';
 
 const useStyles = makeStyles({
   container: {
@@ -19,20 +20,30 @@ const useStyles = makeStyles({
     marginLeft: 10,
     marginRight: 10,
   },
+  previewImgContainer: {},
+  previewImg: {
+    maxWidth: '100%',
+    maxHeight: '100%',
+  },
 });
 
 declare class ClipboardItem {
   constructor(...args: any[]);
 }
 
-const CardPreview: React.FC = () => {
+export interface CardPreviewProps {
+  cardData: any;
+}
+
+export const CardPreview: React.FC<CardPreviewProps> = (props) => {
   const classes = useStyles();
 
-  const [img, setImg] = useState<Blob | undefined>(undefined);
+  const [img, setImg] = useState<string>('');
   const [copySnackBarOpen, setCopySnackBarOpen] = useState(false);
 
   const onCopyToClipBoardButtonClicked = () => {
-    const item = new ClipboardItem({ 'image/png': img });
+    const blob = convertDataURLToBlob(img);
+    const item = new ClipboardItem({ 'image/png': blob });
     (navigator as any).clipboard.write([item]);
     setCopySnackBarOpen(true);
   };
@@ -48,11 +59,17 @@ const CardPreview: React.FC = () => {
     setCopySnackBarOpen(false);
   };
 
+  useEffect(() => {
+    setImg(renderCard(props.cardData));
+  }, []);
+
   return (
     <div className={classes.container}>
-      <div>
-        <CardRenderer maxWidth={400} maxHeight={600} cardData={undefined} onChange={(b) => setImg(b)} />
-      </div>
+      {typeof document !== 'undefined' && (
+        <div className={classes.previewImgContainer}>
+          <img className={classes.previewImg} src={img} />
+        </div>
+      )}
       <div>
         <Button
           className={classes.copyButton}
@@ -87,5 +104,3 @@ const CardPreview: React.FC = () => {
     </div>
   );
 };
-
-export default CardPreview;

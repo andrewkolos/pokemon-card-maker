@@ -1,5 +1,5 @@
 import { AppBar, Box, Tab, Tabs, Theme, Typography } from '@material-ui/core';
-import { createStyles, makeStyles, useTheme } from '@material-ui/styles';
+import { createStyles, makeStyles } from '@material-ui/styles';
 import React from 'react';
 import { Attack } from './attack';
 import clsx from 'clsx';

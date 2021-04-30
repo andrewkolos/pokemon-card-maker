@@ -1,7 +1,7 @@
 import { Container } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import React from 'react';
-import CardPreview from './card-preview';
+import { CardPreview } from './card-preview';
 import Form from './form';
 
 const useStyles = makeStyles({
@@ -33,7 +33,7 @@ export const CardMaker: React.FC = () => {
           <Form />
         </div>
         <div className={classes.previewContainer}>
-          <CardPreview />
+          <CardPreview cardData={null} />
         </div>
       </div>
     </Container>
