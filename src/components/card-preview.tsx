@@ -1,4 +1,4 @@
-import { Button, Snackbar } from '@material-ui/core';
+import { Button, Popover, Snackbar } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/styles';
 import React, { useEffect, useState } from 'react';
@@ -39,13 +39,15 @@ export const CardPreview: React.FC<CardPreviewProps> = (props) => {
   const classes = useStyles();
 
   const [img, setImg] = useState<string>('');
-  const [copySnackBarOpen, setCopySnackBarOpen] = useState(false);
+  const [copyButton, setCopyButton] = useState<HTMLButtonElement>();
+  const [copyAlertOpen, setCopyAlertOpen] = useState(false);
 
-  const onCopyToClipBoardButtonClicked = () => {
+  const onCopyToClipBoardButtonClicked = (e: React.MouseEvent<HTMLButtonElement>) => {
     const blob = convertDataURLToBlob(img);
     const item = new ClipboardItem({ 'image/png': blob });
     (navigator as any).clipboard.write([item]);
-    setCopySnackBarOpen(true);
+    setCopyAlertOpen(true);
+    setCopyButton(e.currentTarget);
   };
 
   const onSaveButtonClicked = () => {
@@ -53,14 +55,12 @@ export const CardPreview: React.FC<CardPreviewProps> = (props) => {
     saveAs(img, 'card.png');
   };
 
-  const onCopySnackBarClosed = (event?: React.SyntheticEvent, reason?: string) => {
-    if (reason === 'clickaway') return;
-
-    setCopySnackBarOpen(false);
+  const onCopiedAlertClosed = () => {
+    setCopyAlertOpen(false);
   };
 
   useEffect(() => {
-    setImg(renderCard(props.cardData));
+    renderCard(props.cardData).then((value) => setImg(value));
   }, []);
 
   return (
@@ -75,32 +75,39 @@ export const CardPreview: React.FC<CardPreviewProps> = (props) => {
           className={classes.copyButton}
           variant="contained"
           color="primary"
-          onClick={() => onCopyToClipBoardButtonClicked()}
+          onClick={onCopyToClipBoardButtonClicked}
           startIcon={<FileCopy />}
         >
           Copy To Clipboard
         </Button>
+        <Popover
+          id="copied-popover"
+          open={copyAlertOpen}
+          anchorEl={copyButton}
+          onClose={onCopiedAlertClosed}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'center',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'center',
+          }}
+        >
+          <Alert onClose={onCopiedAlertClosed} severity="success">
+            Card image copied to clipboard.
+          </Alert>
+        </Popover>
         <Button
           className={classes.copyButton}
           variant="contained"
           color="primary"
-          onClick={() => onSaveButtonClicked()}
+          onClick={onSaveButtonClicked}
           startIcon={<Save />}
         >
           Save
         </Button>
       </div>
-
-      <Snackbar
-        open={copySnackBarOpen}
-        autoHideDuration={3000}
-        onClose={onCopySnackBarClosed}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert onClose={onCopySnackBarClosed} severity="success">
-          Card image copied to clipboard.
-        </Alert>
-      </Snackbar>
     </div>
   );
 };

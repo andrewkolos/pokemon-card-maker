@@ -9,7 +9,7 @@ enum Series {
   SwordShield = "Sword & Shield"
 }
 
-type Card = CardBase & (PokemonCard | TrainerCard | EnergyCard);
+export type Card = CardBase & (PokemonCard | TrainerCard | EnergyCard);
 
 interface CardBase {
   // could also be declared as `interface` instead of `type` but there arent any differences that you would actually care about

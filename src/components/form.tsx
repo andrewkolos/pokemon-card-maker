@@ -9,16 +9,17 @@ import {
   Theme,
 } from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/styles';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { CardType } from '../model/card-type';
 import { Stage } from '../model/stage';
-import { Ability, PokemonType } from '../model/types';
+import { Ability, Card, PokemonCard, PokemonType } from '../model/types';
 import clsx from 'clsx';
 
 import { PokemonTypeSelect } from './pokemon-type-select';
 import { HpSelect } from '../hp';
 import { Attacks } from './attacks';
 import { CardImageSelector } from './card-image-selector';
+import { arrayify } from '../arrayify';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -43,7 +44,11 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const Form: React.FC = () => {
+export interface FormProps {
+  onChange: (card: Card) => void;
+}
+
+const Form: React.FC<FormProps> = (props) => {
   const classes = useStyles();
 
   const [series, setSeries] = React.useState('');
@@ -51,7 +56,7 @@ const Form: React.FC = () => {
   const [stage, setStage] = React.useState('');
   const [prismStar, setPrismStar] = React.useState(false);
   const [gx, setGx] = React.useState('');
-  const [pokemonTypes, setPokemonTypes] = React.useState([] as PokemonType[]);
+  const [pokemonType, setPokemonTypes] = React.useState<PokemonType>();
   const [name, setName] = React.useState('');
   const [hp, setHp] = React.useState('');
   const [weaknesses, setWeaknesses] = React.useState([] as PokemonType[]);
@@ -64,7 +69,31 @@ const Form: React.FC = () => {
   const [rarity, setRarity] = React.useState('');
   const [imagePath, setImagePath] = React.useState('');
   const [hasAbility, setHasAbility] = React.useState(false);
-  const [imgBlob, setImgBlob] = React.useState<Blob>();
+  const [imgDataUrl, setImgDataUrl] = React.useState<string>();
+
+  useEffect(() => {
+    props.onChange({} as any);
+  }, [
+    series,
+    cardType,
+    stage,
+    prismStar,
+    gx,
+    pokemonType,
+    name,
+    hp,
+    weaknesses,
+    resistances,
+    retreatCost,
+    ability,
+    effect,
+    attacks,
+    setNumber,
+    rarity,
+    imagePath,
+    hasAbility,
+    imgDataUrl,
+  ]);
 
   return (
     <div className={classes.root}>
@@ -78,7 +107,14 @@ const Form: React.FC = () => {
       </FormControl>
       <FormControl className={classes.formControl}>
         <InputLabel id="card-type-select-label">Card Type</InputLabel>
-        <Select labelId="card-type-select-label" value={cardType} onChange={(e) => setCardType(e.target.value as any)}>
+        <Select
+          labelId="card-type-select-label"
+          value={cardType}
+          onChange={(e) => {
+            setCardType(e.target.value as any);
+            setImagePath('');
+          }}
+        >
           <MenuItem value="pokemon">Pokemon</MenuItem>
           <MenuItem value="trainer">Trainer</MenuItem>
           <MenuItem value="energy">Energy</MenuItem>
@@ -104,9 +140,8 @@ const Form: React.FC = () => {
         <PokemonTypeSelect
           className={classes.formControl}
           label="Type"
-          multiple
-          value={pokemonTypes}
-          onValueChanged={(v) => setPokemonTypes(v)}
+          value={pokemonType ? arrayify(pokemonType) : []}
+          onValueChanged={(v) => setPokemonTypes(v[0])}
         />
       )}
       {cardType === CardType.Pokemon && (
@@ -214,7 +249,8 @@ const Form: React.FC = () => {
         className={classes.formControl}
         cardImageHeight={1038}
         cardImageWidth={747}
-        onComplete={(imageBlob) => setImgBlob(imageBlob)}
+        onChange={(imageDataUrl) => setImgDataUrl(imageDataUrl)}
+        onComplete={(imageDataUrl) => setImgDataUrl(imageDataUrl)}
       />
     </div>
   );

@@ -1,8 +1,9 @@
 import { Container } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
-import React from 'react';
+import React, { useState } from 'react';
 import { CardPreview } from './card-preview';
 import Form from './form';
+import { Card } from '../model/types';
 
 const useStyles = makeStyles({
   formContainer: {
@@ -24,16 +25,17 @@ const useStyles = makeStyles({
 });
 
 export const CardMaker: React.FC = () => {
+  const [cardData, setCardData] = useState<Card>();
   const classes = useStyles();
 
   return (
     <Container>
       <div className={classes.contentContainer}>
         <div className={classes.formContainer}>
-          <Form />
+          <Form onChange={(card) => setCardData(card)} />
         </div>
         <div className={classes.previewContainer}>
-          <CardPreview cardData={null} />
+          <CardPreview cardData={cardData} />
         </div>
       </div>
     </Container>

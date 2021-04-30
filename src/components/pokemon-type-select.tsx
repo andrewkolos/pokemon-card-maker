@@ -2,6 +2,7 @@ import { FormControl, InputLabel, ListItemIcon, MenuItem, Select } from '@materi
 import React, { useState } from 'react';
 import { enumKeys } from '../enum-keys';
 import { PokemonType } from '../model/types';
+import { arrayify } from '../arrayify';
 import { PokemonTypeImage } from './type-image';
 export interface PokemonTypeSelectProps {
   multiple?: boolean;
@@ -57,8 +58,4 @@ export const PokemonTypeSelect: React.FC<PokemonTypeSelectProps> = (props) => {
 
 function capitalize(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1);
-}
-
-function arrayify<T>(o: T | T[]): T[] {
-  return Array.isArray(o) ? o : [o];
 }

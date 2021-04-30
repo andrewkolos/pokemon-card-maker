@@ -60,7 +60,8 @@ export interface FileUploadProps {
   cardImageHeight: number;
   cardImageWidth: number;
   className?: string;
-  onComplete: (image: Blob) => void;
+  onComplete?: (imageDataUrl: string) => void;
+  onChange?: (imageDataUrl: string) => void;
 }
 
 export interface Dimension {
@@ -129,14 +130,13 @@ export const CardImageSelector: React.FC<FileUploadProps> = (props) => {
   const onSaveButtonClicked = () => {
     const img = new Image();
     img.onload = () => {
-      getCroppedImg(img, crop).then((blob) => {
-        props.onComplete(blob);
-        setSaving(false);
-        setModalOpen(false);
-        onModalClosed();
-        setResizedImg(undefined);
-        setCropDims(undefined);
-      });
+      const result = getCroppedImg(img, crop);
+      props.onComplete(result);
+      setSaving(false);
+      setModalOpen(false);
+      onModalClosed();
+      setResizedImg(undefined);
+      setCropDims(undefined);
     };
     img.src = resizedImg!;
     setSaving(true);
@@ -175,6 +175,7 @@ export const CardImageSelector: React.FC<FileUploadProps> = (props) => {
               crop={crop}
               src={resizedImg}
               onChange={(_nextCrop, percentCrop) => setCrop(percentCrop)}
+              onImageLoaded={(target) => props.onChange && props.onChange(convertImgElToDataUrl(target))}
             />
           )}
           <Button onClick={() => onSaveButtonClicked()}>{saving ? 'Saving...' : 'Save'}</Button>
@@ -188,7 +189,7 @@ export const CardImageSelector: React.FC<FileUploadProps> = (props) => {
  * @param {HTMLImageElement} image - Image File Object.
  * @param {String} fileName - Name of the returned file in Promise.
  */
-function getCroppedImg(image: HTMLImageElement, crop: ReactCrop.Crop): Promise<Blob> {
+function getCroppedImg(image: HTMLImageElement, crop: ReactCrop.Crop): string {
   if (!crop.width || !crop.height || crop.x == null || crop.y == null) {
     throw Error('Crop is missing a dimension.');
   }
@@ -208,24 +209,22 @@ function getCroppedImg(image: HTMLImageElement, crop: ReactCrop.Crop): Promise<B
   if (!ctx) throw Error('Could not get context for image canvas');
 
   ctx.drawImage(image, x * scaleX, y * scaleY, width * scaleX, height * scaleY, 0, 0, width, height);
-
-  // As Base64 string
-  // const base64Image = canvas.toDataURL('image/jpeg');
-  // As a blob
-  return new Promise((resolve, reject) => {
-    canvas.toBlob(
-      (blob) => {
-        if (!blob) {
-          reject('Blob is undefined/null.');
-          return;
-        }
-        resolve(blob);
-      },
-      'image/jpeg',
-      1
-    );
-  });
+  return canvas.toDataURL('image/jpeg');
 }
+//   return new Promise((resolve, reject) => {
+//     canvas.toBlob(
+//       (blob) => {
+//         if (!blob) {
+//           reject('Blob is undefined/null.');
+//           return;
+//         }
+//         resolve(blob);
+//       },
+//       'image/jpeg',
+//       1
+//     );
+//   });
+// }
 
 function getImgDimensions(dataUri: string): Promise<Dimension> {
   return new Promise((resolve) => {
@@ -266,4 +265,15 @@ function imageMinsizer(width: number, height: number, minWidth: number, minHeigh
     height,
     resized: false,
   };
+}
+function convertImgElToDataUrl(img: HTMLImageElement): string {
+  // Create canvas
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  // Set width and height
+  canvas.width = img.width;
+  canvas.height = img.height;
+  // Draw the image
+  ctx!.drawImage(img, 0, 0);
+  return canvas.toDataURL('image/jpeg');
 }

@@ -13,21 +13,21 @@ function createCanvas(width: number, height: number) {
 
 const imageCache = new Map<string, HTMLImageElement>();
 
-export function renderCard(cardData: any) {
+export async function renderCard(cardData: any): Promise<string> {
   const canvas = createCanvas(cardWidth, cardHeight);
 
   const context = canvas.getContext('2d')!;
   context.fillStyle = '#cdcdcd';
   context.fillRect(0, 0, context.canvas.width, context.canvas.height);
 
-  renderImage(0, 0, 'img.png');
+  await renderImage(0, 0, 'img.png');
 
   renderText({
     color: 'black',
     text: 'sample text',
     fontName: 'FuturaStd',
     fontSize: 48,
-    x: 10,
+    x: 20,
     y: 250,
     maxWidth: 300,
     stroke: {
@@ -88,32 +88,46 @@ export function renderCard(cardData: any) {
     }
   }
 
-  function renderImage(x: number, y: number, imgSrc: string, opts: { maxWidth?: number; maxHeight?: number } = {}) {
-    const imgEl = imageCache.has(imgSrc)
-      ? imageCache.get(imgSrc)!
-      : (() => {
-        const value = document.createElement('img');
-        value.src = imgSrc;
-        imageCache.set(imgSrc, value);
-        return value;
-      })();
+  function renderImage(x: number, y: number, imgSrc: string, opts: { maxWidth?: number; maxHeight?: number } = {}): Promise<void> {
+    return new Promise<void>((resolve) => {
+      const fromCache = imageCache.get(imgSrc);
 
-    const originalHeight = imgEl.height;
-    const originalWidth = imgEl.width;
+      const imgEl = fromCache ||
+        (() => {
+          const value = document.createElement('img');
+          value.src = imgSrc;
+          imageCache.set(imgSrc, value);
+          return value;
+        })();
 
-    const maxHeight = opts.maxHeight ?? originalHeight;
-    const maxWidth = opts.maxWidth ?? originalWidth;
-    const { height, width } = calculateAspectRatioFit({
-      height: originalHeight,
-      width: originalWidth,
-      maxHeight,
-      maxWidth,
+      imgEl.onload = () => {
+        paint();
+      }
+
+      if (fromCache) paint();
+
+      function paint() {
+        const originalHeight = imgEl.height;
+        const originalWidth = imgEl.width;
+
+        const maxHeight = opts.maxHeight ?? originalHeight;
+        const maxWidth = opts.maxWidth ?? originalWidth;
+        const { height, width } = calculateAspectRatioFit({
+          height: originalHeight,
+          width: originalWidth,
+          maxHeight,
+          maxWidth,
+        });
+
+        imgEl.width = width;
+        imgEl.height = height;
+
+        context.drawImage(imgEl, x, y);
+        resolve();
+      }
+
     });
 
-    imgEl.width = width;
-    imgEl.height = height;
-
-    context.drawImage(imgEl, x, y);
   }
 }
 
