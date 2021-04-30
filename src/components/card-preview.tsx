@@ -6,6 +6,7 @@ import { renderCard } from './card-rendering/render-card';
 import { saveAs } from 'file-saver';
 import { FileCopy, Save } from '@material-ui/icons';
 import { convertDataURLToBlob } from '@barusu/util-blob';
+import { Card } from '../model/types';
 
 const useStyles = makeStyles({
   container: {
@@ -32,7 +33,7 @@ declare class ClipboardItem {
 }
 
 export interface CardPreviewProps {
-  cardData: any;
+  cardData?: Card;
 }
 
 export const CardPreview: React.FC<CardPreviewProps> = (props) => {
