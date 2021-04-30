@@ -43,6 +43,7 @@ export default function App(props: AppProps) {
       jssStyles.parentElement?.removeChild(jssStyles);
     }
   }, []);
+
   const [darkMode, setDarkMode] = useState<boolean>(
     (() => {
       const cache = typeof window === 'undefined' ? false : localStorage.getItem(darkModeStorageKey);
@@ -82,6 +83,7 @@ export default function App(props: AppProps) {
       </AppBar>
 
       <Head>
+        <meta name="theme-color" content={theme.palette.primary.main} />
         <title>Pokemon Card Maker</title>
         <link rel="icon" href="/favicon.ico" />
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
