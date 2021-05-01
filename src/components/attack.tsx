@@ -10,8 +10,8 @@ import {
   TextField,
   Theme,
 } from '@material-ui/core';
-import { useState } from 'react';
-import { DamageSign, PokemonType } from '../model/types';
+import { useEffect, useState } from 'react';
+import { Attack as AttackModel, DamageSign, PokemonType } from '../model/types';
 import React from 'react';
 import { makeStyles, useTheme } from '@material-ui/styles';
 import clsx from 'clsx';
@@ -21,6 +21,7 @@ import Image from 'next/image';
 import { enumKeys } from '../enum-keys';
 import { PokemonTypeImage } from './type-image';
 import { Label } from 'mdi-material-ui';
+import { undefIfEmpty } from '../util';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -59,24 +60,53 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export interface AttackProps {}
+export interface AttackProps {
+  value?: Partial<AttackModel>;
+  onChange: (v: Partial<AttackModel>) => void;
+}
 
 type EnergyReqMap = {
   [key in PokemonType]: number;
 };
 
-export const Attack: React.FC = () => {
-  const [name, setName] = useState('');
-  const [text, setText] = useState('');
-  const [damageSign, setDamageSign] = useState(false);
-  const [damage, setDamage] = useState('');
+function energyMapToArray(map: EnergyReqMap): PokemonType[] {
+  const result: PokemonType[] = [];
+  Object.entries(map).forEach((e) => {
+    const attacksOfCurrentType: PokemonType[] = Array.from({ length: e[1] }, () => e[0] as PokemonType);
+    result.push(...attacksOfCurrentType);
+  });
+  return result;
+}
+
+export const Attack: React.FC<AttackProps> = (props) => {
+  const [name, setName] = useState(props.value?.name ?? '');
+  const [text, setText] = useState(props.value?.effectText ?? '');
+  const [damageSign, setDamageSign] = useState<DamageSign | ''>(props.value?.damageSign ?? '');
+  const [damage, setDamage] = useState(props.value?.damage ?? '');
   const [attackCost, setAttackCost] = useState<EnergyReqMap>(
     (() => {
       const result = {} as EnergyReqMap;
       enumKeys(PokemonType).forEach((t) => (result[PokemonType[t]] = 0));
+
+      if (props.value?.cost) {
+        props.value.cost.forEach((t) => {
+          result[t] = result[t] + 1;
+        });
+      }
+
       return result;
     })()
   );
+
+  useEffect(() => {
+    props.onChange({
+      cost: energyMapToArray(attackCost),
+      damage: damage === '' ? undefined : Number(damage),
+      damageSign: undefIfEmpty(damageSign),
+      effectText: text,
+      name,
+    });
+  }, [name, text, damageSign, damage, attackCost]);
 
   const classes = useStyles();
   const theme: Theme = useTheme();
@@ -93,8 +123,12 @@ export const Attack: React.FC = () => {
         <HpSelect value={damage} label="Damage" onChange={(v) => setDamage(v)} className={classes.control} />
         <FormControl className={classes.damageSignSelect}>
           <InputLabel id="damage-modifier-select-label">Damage mod</InputLabel>
-          <Select labelId="damage-modifier-select-label">
-            <MenuItem value={'undefined'} placeholder="None">
+          <Select
+            labelId="damage-modifier-select-label"
+            value={damageSign}
+            onChange={(e) => setDamageSign(e.target.value as any)}
+          >
+            <MenuItem value="none" placeholder="None">
               None
             </MenuItem>
             <MenuItem value={DamageSign.Plus}>{DamageSign.Plus}</MenuItem>
@@ -115,7 +149,7 @@ export const Attack: React.FC = () => {
         {enumKeys(PokemonType)
           .filter((v) => PokemonType[v] !== PokemonType.Dragon)
           .map((type) => (
-            <React.Fragment>
+            <React.Fragment key={type}>
               <TextField
                 label={type}
                 className={classes.controlSmall}

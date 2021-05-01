@@ -9,19 +9,28 @@ import {
   Theme,
 } from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/styles';
-import React, { useEffect } from 'react';
-import { CardType } from '../model/card-type';
-import { Stage } from '../model/stage';
-import { Ability, Card, PokemonCard, PokemonType } from '../model/types';
 import clsx from 'clsx';
-
-import { PokemonTypeSelect } from './pokemon-type-select';
+import React, { useEffect } from 'react';
+import { arrayify, DeepPartial, undefIfEmpty } from '../util';
 import { HpSelect } from '../hp';
+import { CardType } from '../model/card-type';
+import { Series } from '../model/series';
+import { Stage } from '../model/stage';
+import {
+  Ability,
+  Attack,
+  Card,
+  EnergyCard,
+  GxType,
+  PokemonCard,
+  PokemonType,
+  TrainerCardBase,
+  TrainerType,
+} from '../model/types';
 import { Attacks } from './attacks';
 import { CardImageSelector } from './card-image-selector';
-import { arrayify } from '../arrayify';
-import { NoMeetingRoom } from '@material-ui/icons';
-import { Series } from '../model/series';
+import { PokemonTypeSelect } from './pokemon-type-select';
+import { Energy } from '../model/energy';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -45,67 +54,97 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     imageSection: {
       display: 'flex',
+      width: '100%',
     },
   })
 );
 
 export interface FormProps {
-  onChange: (card: Card) => void;
+  onChange: (card: DeepPartial<Card>) => void;
 }
 
 const Form: React.FC<FormProps> = (props) => {
   const classes = useStyles();
 
-  const [series, setSeries] = React.useState('');
-  const [cardType, setCardType] = React.useState('');
-  const [stage, setStage] = React.useState('');
+  const [series, setSeries] = React.useState<Series | ''>('');
+  const [cardType, setCardType] = React.useState<CardType | ''>('');
+  const [stage, setStage] = React.useState<Stage | ''>('');
   const [prismStar, setPrismStar] = React.useState(false);
-  const [gx, setGx] = React.useState('');
-  const [pokemonType, setPokemonTypes] = React.useState<PokemonType>();
+  const [gxType, setGxType] = React.useState<GxType | ''>('');
+  const [pokemonType, setPokemonType] = React.useState<PokemonType | ''>('');
   const [name, setName] = React.useState('');
-  const [hp, setHp] = React.useState('');
-  const [weaknesses, setWeaknesses] = React.useState([] as PokemonType[]);
-  const [resistances, setResistances] = React.useState([] as PokemonType[]);
-  const [retreatCost, setRetreatCost] = React.useState('');
+  const [hp, setHp] = React.useState<number>();
+  const [weakness, setWeakness] = React.useState<PokemonType | ''>('');
+  const [resistance, setResistance] = React.useState<PokemonType | ''>('');
+  const [retreatCost, setRetreatCost] = React.useState<number | ''>('');
   const [ability, setAbility] = React.useState<Partial<Ability>>({});
   const [effect, setEffect] = React.useState('');
-  const [attacks, setAttacks] = React.useState([] as string[]);
+  const [attacks, setAttacks] = React.useState<Attack[]>([]);
   const [setNumber, setSetNumber] = React.useState('');
-  const [rarity, setRarity] = React.useState('');
-  const [imagePath, setImagePath] = React.useState('');
   const [hasAbility, setHasAbility] = React.useState(false);
   const [imgDataUrl, setImgDataUrl] = React.useState<string>();
-  const [trainerType, setTrainerType] = React.useState('Item');
+  const [trainerType, setTrainerType] = React.useState<TrainerType | ''>('');
   const [isFullArt, setIsFullArt] = React.useState(false);
   const [updated, setUpdated] = React.useState(false);
 
   const broadcast = () => setUpdated(true);
+
   useEffect(() => {
     if (!updated) return;
-    props.onChange({
-      series,
-      cardType,
-      stage,
-      prismStar,
-      gx,
-      pokemonType,
+
+    if (series !== Series.SunMoon || !cardType) return;
+
+    const commonItems: DeepPartial<Card> = {
+      series: undefIfEmpty(series),
       name,
-      hp,
-      weaknesses,
-      resistances,
-      retreatCost,
-      ability,
-      effect,
-      attacks,
-      setNumber,
-      rarity,
-      imagePath,
-      hasAbility,
-      imgDataUrl,
       image: imgDataUrl,
-      trainerType,
-      isFullArt,
-    } as any);
+      fullArt: isFullArt,
+    };
+
+    if (cardType === CardType.Trainer && trainerType) {
+      const card: DeepPartial<TrainerCardBase> = {
+        ...commonItems,
+        ...{
+          cardType,
+          effect,
+          trainerType,
+          prismStar,
+        },
+      };
+      props.onChange(card);
+    }
+
+    if (cardType === CardType.Energy) {
+      const card: DeepPartial<EnergyCard> = {
+        ...commonItems,
+        ...{
+          cardType: CardType.Energy,
+          energyType: undefIfEmpty(pokemonType),
+          effect,
+        },
+      };
+      props.onChange(card);
+    }
+
+    if (cardType === CardType.Pokemon) {
+      const card: DeepPartial<PokemonCard> = {
+        ...commonItems,
+        ...{
+          ability,
+          attacks,
+          cardType: CardType.Pokemon,
+          gxType: undefIfEmpty(gxType),
+          hp: hp ? Number(hp) : undefined,
+          pokemonType: undefIfEmpty(pokemonType),
+          prismStar,
+          resistance,
+          ultraBeast: false,
+          weakness,
+          retreatCost: isNaN(Number(retreatCost)) ? undefined : (retreatCost as number),
+        },
+      };
+      props.onChange(card);
+    }
     setUpdated(false);
   }, [updated]);
 
@@ -133,13 +172,13 @@ const Form: React.FC<FormProps> = (props) => {
           value={cardType}
           onChange={(e) => {
             setCardType(e.target.value as any);
-            setImagePath('');
+            setImgDataUrl(undefined);
             broadcast();
           }}
         >
-          <MenuItem value="pokemon">Pokemon</MenuItem>
-          <MenuItem value="trainer">Trainer</MenuItem>
-          <MenuItem value="energy">Energy</MenuItem>
+          <MenuItem value={CardType.Pokemon}>Pokemon</MenuItem>
+          <MenuItem value={CardType.Trainer}>Trainer</MenuItem>
+          <MenuItem value={CardType.Energy}>Energy</MenuItem>
         </Select>
       </FormControl>
 
@@ -162,16 +201,17 @@ const Form: React.FC<FormProps> = (props) => {
               broadcast();
             }}
           >
-            <MenuItem value="Item">Item</MenuItem>
-            <MenuItem value="Stadium">Stadium</MenuItem>
-            <MenuItem value="Supporter">Supporter</MenuItem>
-            <MenuItem value="Tool">Tool</MenuItem>
+            <MenuItem value={TrainerType.Item}>Item</MenuItem>
+            <MenuItem value={TrainerType.Stadium}>Stadium</MenuItem>
+            <MenuItem value={TrainerType.Supporter}>Supporter</MenuItem>
+            <MenuItem value={TrainerType.Tool}>Tool</MenuItem>
           </Select>
         </FormControl>
       )}
 
-      {cardType === CardType.Trainer && trainerType === 'Supporter' && series === Series.SunMoon && (
+      {cardType === CardType.Trainer && trainerType === TrainerType.Supporter && series === Series.SunMoon && (
         <FormControlLabel
+          className={classes.formControl}
           control={
             <Checkbox
               checked={prismStar}
@@ -197,15 +237,16 @@ const Form: React.FC<FormProps> = (props) => {
               broadcast();
             }}
           >
-            <MenuItem value="basic">Basic</MenuItem>
-            <MenuItem value="one">One</MenuItem>
-            <MenuItem value="two">Two</MenuItem>
+            <MenuItem value={Stage.Basic}>Basic</MenuItem>
+            <MenuItem value={Stage.One}>One</MenuItem>
+            <MenuItem value={Stage.Two}>Two</MenuItem>
           </Select>
         </FormControl>
       )}
 
       {cardType === CardType.Pokemon && stage === Stage.Basic && (
         <FormControlLabel
+          className={classes.formControl}
           control={
             <Checkbox
               checked={prismStar}
@@ -225,32 +266,31 @@ const Form: React.FC<FormProps> = (props) => {
           label="Type"
           value={pokemonType ? arrayify(pokemonType) : []}
           onValueChanged={(v) => {
-            setPokemonTypes(v[0]);
+            setPokemonType(v[0]);
             broadcast();
           }}
         />
       )}
       {cardType === CardType.Pokemon && (
         <PokemonTypeSelect
-          multiple
           canPickNone
           className={classes.formControl}
           label="Resistances"
-          value={resistances}
+          value={resistance ? [resistance] : undefined}
           onValueChanged={(v) => {
-            setResistances(v);
+            setResistance(v[0]);
             broadcast();
           }}
         />
       )}
       {cardType === CardType.Pokemon && (
         <PokemonTypeSelect
+          canPickNone
           label="Weaknesses"
-          multiple
           className={classes.formControl}
-          value={weaknesses}
+          value={weakness ? [weakness] : []}
           onValueChanged={(v) => {
-            setWeaknesses(v);
+            setWeakness(v[0]);
             broadcast();
           }}
         />
@@ -262,16 +302,16 @@ const Form: React.FC<FormProps> = (props) => {
             labelId="retreat-cost-select-label"
             value={retreatCost}
             onChange={(e) => {
-              setRetreatCost(e.target.value as string);
+              setRetreatCost(e.target.value as number);
               broadcast();
             }}
           >
-            <MenuItem value="0">None</MenuItem>
-            <MenuItem value="1">1</MenuItem>
-            <MenuItem value="2">2</MenuItem>
-            <MenuItem value="3">3</MenuItem>
-            <MenuItem value="4">4</MenuItem>
-            <MenuItem value="5">5</MenuItem>
+            <MenuItem value={0}>None</MenuItem>
+            <MenuItem value={1}>1</MenuItem>
+            <MenuItem value={2}>2</MenuItem>
+            <MenuItem value={3}>3</MenuItem>
+            <MenuItem value={4}>4</MenuItem>
+            <MenuItem value={5}>5</MenuItem>
           </Select>
         </FormControl>
       )}
@@ -290,15 +330,15 @@ const Form: React.FC<FormProps> = (props) => {
           <InputLabel id="gx-select-label">GX</InputLabel>
           <Select
             labelId="gx-select-label"
-            value={gx}
+            value={gxType}
             onChange={(e) => {
-              setGx(e.target.value as any);
+              setGxType(e.target.value as any);
               broadcast();
             }}
           >
-            <MenuItem value="gx">GX</MenuItem>
-            <MenuItem value="tagteamgx">Tag Team GX</MenuItem>
-            <MenuItem value="neither">Neither</MenuItem>
+            <MenuItem value={''}>Neither</MenuItem>
+            <MenuItem value={GxType.Gx}>GX</MenuItem>
+            <MenuItem value={GxType.TagTeam}>Tag Team GX</MenuItem>
           </Select>
         </FormControl>
       )}
@@ -351,7 +391,16 @@ const Form: React.FC<FormProps> = (props) => {
 
       <div className={classes.break}></div>
 
-      {cardType === CardType.Pokemon && <Attacks className={classes.formControl} pokemonHasAbility={hasAbility} />}
+      {cardType === CardType.Pokemon && (
+        <Attacks
+          onChange={(a) => {
+            setAttacks(a);
+            broadcast();
+          }}
+          className={classes.formControl}
+          pokemonHasAbility={hasAbility}
+        />
+      )}
 
       <div className={classes.break}></div>
 
@@ -370,14 +419,8 @@ const Form: React.FC<FormProps> = (props) => {
       <div className={classes.break}></div>
 
       <div className={classes.imageSection}>
-        <FormControlLabel
-          className={clsx(classes.formControl)}
-          control={<Checkbox checked={isFullArt} onChange={(e) => setIsFullArt(e.target.checked)} color="primary" />}
-          label="Full Art"
-        />
-
         <CardImageSelector
-          className={classes.formControl}
+          className={clsx(classes.formControl, classes.flex1)}
           cardImageHeight={1038}
           cardImageWidth={747}
           onChange={(imageDataUrl) => {
@@ -388,6 +431,12 @@ const Form: React.FC<FormProps> = (props) => {
             setImgDataUrl(imageDataUrl);
             broadcast();
           }}
+        />
+
+        <FormControlLabel
+          className={clsx(classes.formControl)}
+          control={<Checkbox checked={isFullArt} onChange={(e) => setIsFullArt(e.target.checked)} color="primary" />}
+          label="Full Art"
         />
       </div>
     </div>

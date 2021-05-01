@@ -2,7 +2,7 @@ import { FormControl, InputLabel, ListItemIcon, MenuItem, Select } from '@materi
 import React, { useState } from 'react';
 import { enumKeys } from '../enum-keys';
 import { PokemonType } from '../model/types';
-import { arrayify } from '../arrayify';
+import { arrayify } from '../util';
 import { PokemonTypeImage } from './type-image';
 export interface PokemonTypeSelectProps {
   multiple?: boolean;
@@ -32,13 +32,25 @@ export const PokemonTypeSelect: React.FC<PokemonTypeSelectProps> = (props) => {
         renderValue={(selected) => {
           const types = arrayify(selected) as PokemonType[];
           return types.map((s) => (
-            <React.Fragment>
+            <React.Fragment key="s">
               <PokemonTypeImage type={s} size={16} />
               {types.length === 1 ? ' ' + capitalize(s) : undefined}
             </React.Fragment>
           ));
         }}
       >
+        {props.canPickNone && (
+          <MenuItem
+            value=""
+            key=""
+            onSelect={(e) => {
+              setSelectedValues([]);
+              e.preventDefault();
+            }}
+          >
+            None
+          </MenuItem>
+        )}
         {enumKeys(PokemonType).map((k) => {
           const type = PokemonType[k];
           if (excludedValues.has(type)) return undefined;

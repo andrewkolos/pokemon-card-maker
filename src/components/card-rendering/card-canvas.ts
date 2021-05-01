@@ -1,3 +1,4 @@
+import { Wrap } from 'mdi-material-ui';
 import { calculateAspectRatioFit } from './calculate-card-aspect-ratio-fit';
 
 export interface RenderTextArgs {
@@ -13,8 +14,8 @@ export interface RenderTextArgs {
     width: number;
   };
   wrap?: {
-    baselineY: number;
-  };
+    baseline: 'top' | 'bottom',
+  }
 }
 
 const cardWidth = 747;
@@ -38,8 +39,13 @@ export class CardCanvas {
   public async drawText(args: RenderTextArgs): Promise<number> {
     await this.awaitPendingOperations();
 
+
     // TODO: narrow type of fontName to a specific set of names.
     const ctx = this.canvas.getContext('2d')!;
+
+    ctx.fillStyle = 'darkred';
+    ctx.fillRect(args.x, args.y, args.maxWidth, 3);
+
 
     ctx.font = `${args.fontSize}px ${args.fontName}`;
     if (args.stroke) {
@@ -62,6 +68,8 @@ export class CardCanvas {
     }
 
     function renderMultilineText(): number {
+      if (args.wrap == null) throw Error('Cannot render multiline text when `wrap` arg is undefined.');
+
       const words = args.text.split(' ');
       let candidateLineWords: string[] = [];
       const lines: string[] = [];
@@ -82,9 +90,13 @@ export class CardCanvas {
       const blockHeight = lineHeight * lines.length;
 
       lines.forEach((l, i) => {
-        ctx.fillText(l, args.x, args.y - (blockHeight - lineHeight * i));
-        ctx.strokeText(l, args.x, args.y - (blockHeight - lineHeight * i));
+        const y = args.wrap!.baseline === 'bottom' ?
+          args.y - (blockHeight - lineHeight * (i + 1)) : args.y + (lineHeight * i);
+
+        ctx.fillText(l, args.x, y);
+        ctx.strokeText(l, args.x, y);
       });
+
 
       return blockHeight;
     }

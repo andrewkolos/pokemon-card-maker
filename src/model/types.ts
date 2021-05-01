@@ -9,10 +9,9 @@ enum Series {
   SwordShield = "Sword & Shield"
 }
 
-export type Card = (PokemonCard | TrainerCard | EnergyCard);
+export type Card = PokemonCard | TrainerCardBase | EnergyCard;
 
 interface CardBase {
-  // could also be declared as `interface` instead of `type` but there arent any differences that you would actually care about
   name: string;
   image: string;
   fullArt: boolean;
@@ -39,6 +38,11 @@ export enum DamageSign {
   Cross = 'x',
 }
 
+export enum GxType {
+  Gx = 'gx',
+  TagTeam = 'tag_team',
+}
+
 export interface Attack {
   damage?: number;
   effectText?: string;
@@ -59,7 +63,7 @@ interface PokemonCardBase extends CardBase {
   hp: number;
   weakness: string;
   resistance: string;
-  retreatcost: number;
+  retreatCost: number;
   ability?: Ability;
   attacks: Attack[];
   // anything that all pokemon cards have
@@ -67,35 +71,39 @@ interface PokemonCardBase extends CardBase {
 
 export interface SunMoonPokemonCard extends PokemonCardBase {
   series: Series.SunMoon;
-  gx: boolean; //
-  tagteamgx: boolean;
+  gxType?: GxType;
   prismStar: boolean;
   ultraBeast: boolean;
   // anything specific to sun/moon cards
 }
 
-interface SwordShieldPokemonCard {
+interface SwordShieldPokemonCard extends PokemonCardBase {
 
 }
 
 export type PokemonCard = SunMoonPokemonCard | SwordShieldPokemonCard;
 
+export enum TrainerType {
+  Item = 'item',
+  Tool = 'tool',
+  Stadium = 'stadium',
+  Supporter = 'supporter',
+}
 
-export interface TrainerCard extends CardBase {
+export type TrainerCard = SunMoonTrainerCard; // Union new trainer cards as needed
+interface TrainerCardBase extends CardBase {
+  cardType: CardType.Trainer;
   effect: string;
-  cardType: CardType.Trainer
-  trainerType: "Item" | "Tool" | "Stadium" | "Supporter";
-
+  trainerType: TrainerType;
 }
 
-export interface SunMoonTrainerCard extends TrainerCard {
+export interface SunMoonTrainerCard extends TrainerCardBase {
   prismStar: boolean;
-
 }
 
-interface EnergyCard extends CardBase {
-  cardType: CardType.Energy
-  energyType: PokemonType
+export interface EnergyCard extends CardBase {
+  cardType: CardType.Energy;
+  energyType: PokemonType;
   effect: string;
 }
 

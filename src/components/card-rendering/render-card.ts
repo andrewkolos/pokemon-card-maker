@@ -1,14 +1,14 @@
-import { Card, SunMoonTrainerCard } from '../../model/types';
+import { Card, SunMoonTrainerCard, TrainerType } from '../../model/types';
+import { DeepPartial } from '../../util';
 import { CardCanvas } from './card-canvas';
 
-function isSunMoonTrainerCard(card: Card): card is SunMoonTrainerCard {
+function isSunMoonTrainerCard(card: object): card is SunMoonTrainerCard {
   const asPokemonCard = card as Partial<SunMoonTrainerCard>;
   return asPokemonCard.trainerType != null && asPokemonCard.prismStar != null;
 }
 
-export async function renderCard(cardData?: Card): Promise<string> {
+export async function renderCard(cardData?: DeepPartial<Card>): Promise<string> {
   const canvas = new CardCanvas();
-  console.log(cardData);
 
   if (cardData === undefined) {
   } else if (isSunMoonTrainerCard(cardData)) {
@@ -19,7 +19,7 @@ export async function renderCard(cardData?: Card): Promise<string> {
 
     const template = prismStar
       ? 'SunMoonTrainers/Prism.png'
-      : trainerType == 'Stadium'
+      : trainerType === TrainerType.Stadium
         ? 'SunMoonTrainers/Stadium.png'
         : fullArt
           ? `SunMoonTrainers/${trainerType}FA.png`
@@ -27,17 +27,17 @@ export async function renderCard(cardData?: Card): Promise<string> {
     if (cardData.image) {
       canvas.drawImage(0, 0, cardData.image);
     }
-    //   canvas.drawImage(0, 0, template);
+    canvas.drawImage(0, 0, template);
     canvas.drawText({
       color: 'black',
       wrap: {
-        baselineY: 500,
+        baseline: 'top',
       },
       text: cardData.effect,
       fontName: 'FuturaStd',
-      fontSize: 48,
-      x: 50,
-      y: 500,
+      fontSize: 24,
+      x: 70,
+      y: 600,
       maxWidth: 600,
       stroke: {
         color: 'white',
@@ -49,9 +49,9 @@ export async function renderCard(cardData?: Card): Promise<string> {
       text: cardData.name,
       fontName: 'FuturaStd',
       fontSize: 48,
-      x: 20,
-      y: 20,
-      maxWidth: 300,
+      x: 40,
+      y: 125,
+      maxWidth: 800,
       stroke: {
         color: 'white',
         width: 1,

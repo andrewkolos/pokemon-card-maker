@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme: Theme) =>
       justifyContent: 'center',
     },
     cropModalContent: {
-      position: 'absolute',
+      position: 'relative',
       backgroundColor: theme.palette.background.paper,
       border: `2px solid ${theme.palette.divider}`,
       boxShadow: theme.shadows[5],

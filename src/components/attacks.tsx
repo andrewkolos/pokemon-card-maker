@@ -1,8 +1,9 @@
 import { AppBar, Box, Tab, Tabs, Theme, Typography } from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/styles';
 import React from 'react';
-import { Attack } from './attack';
 import clsx from 'clsx';
+import { Attack as AttackComponent } from './attack';
+import { Attack } from '../model/types';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -16,24 +17,28 @@ const useStyles = makeStyles((theme: Theme) =>
 export interface AttacksProps {
   className?: string;
   pokemonHasAbility?: boolean;
+  onChange?: (value: Attack[]) => void;
 }
 
 export const Attacks: React.FC<AttacksProps> = (props) => {
   const classes = useStyles();
-  const [value, setValue] = React.useState(0);
+  const [tab, setTab] = React.useState(0);
+  const [attackOne, setAttackOne] = React.useState<Partial<Attack>>();
+  const [attackTwo, setAttackTwo] = React.useState<Partial<Attack>>();
+  const [attackThree, setAttackThree] = React.useState<Partial<Attack>>();
 
   const handleChange = (_event: React.ChangeEvent<{}>, newValue: number) => {
-    setValue(newValue);
+    setTab(newValue);
   };
 
-  if (props.pokemonHasAbility && value === 2) {
-    setValue(0);
+  if (props.pokemonHasAbility && tab === 2) {
+    setTab(0);
   }
   return (
     <div className={clsx(classes.root, props.className)}>
       <AppBar position="static" color="default">
         <Tabs
-          value={value}
+          value={tab}
           onChange={handleChange}
           indicatorColor="primary"
           textColor="primary"
@@ -45,15 +50,15 @@ export const Attacks: React.FC<AttacksProps> = (props) => {
           {!props.pokemonHasAbility && <Tab disabled={props.pokemonHasAbility} label="Attack 3" />}
         </Tabs>
       </AppBar>
-      <TabPanel value={value} index={0}>
-        <Attack />
+      <TabPanel value={tab} index={0}>
+        <AttackComponent value={attackOne} onChange={(v) => setAttackOne(v)} />
       </TabPanel>
-      <TabPanel value={value} index={1}>
-        <Attack />
+      <TabPanel value={tab} index={1}>
+        <AttackComponent value={attackTwo} onChange={(v) => setAttackTwo(v)} />
       </TabPanel>
       {!props.pokemonHasAbility && (
-        <TabPanel value={value} index={2}>
-          <Attack />
+        <TabPanel value={tab} index={2}>
+          <AttackComponent value={attackThree} onChange={(v) => setAttackThree(v)} />
         </TabPanel>
       )}
     </div>
@@ -72,11 +77,7 @@ const TabPanel = (props: TabPanelProps) => {
 
   return (
     <div role="tabpanel" hidden={value !== index} id={`tabpanel-${index}`} aria-labelledby={`tab-${index}`} {...other}>
-      {value === index && (
-        <Box p={1.5}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
+      {value === index && <Box p={1.5}>{children}</Box>}
     </div>
   );
 };

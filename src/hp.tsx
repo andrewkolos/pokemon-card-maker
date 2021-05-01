@@ -15,13 +15,13 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export interface HpSelectProps {
   className?: string;
-  onChange?: (value: string) => void;
+  onChange?: (value: number) => void;
   label: string;
   value?: number | string;
 }
 
 export const HpSelect: React.FC<HpSelectProps> = (props) => {
-  const [value, setValue] = useState(props.value ? String(props.value) : '');
+  const [value, setValue] = useState(props.value ? String(props.value) : undefined);
   const classes = useStyles();
 
   return (
@@ -36,7 +36,7 @@ export const HpSelect: React.FC<HpSelectProps> = (props) => {
             onBlur={(e) => {
               const value = hpList.find((v) => v.startsWith(String(e.target.value)));
               if (value) setValue(value);
-              if (value && props.onChange) props.onChange(value);
+              if (value && props.onChange) props.onChange(Number(value));
             }}
           />
         )}

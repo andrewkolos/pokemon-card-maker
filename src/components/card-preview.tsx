@@ -33,7 +33,7 @@ declare class ClipboardItem {
 }
 
 export interface CardPreviewProps {
-  cardData?: Card;
+  cardData?: Partial<Card>;
 }
 
 export const CardPreview: React.FC<CardPreviewProps> = (props) => {
@@ -52,8 +52,8 @@ export const CardPreview: React.FC<CardPreviewProps> = (props) => {
   };
 
   const onSaveButtonClicked = () => {
-    if (img == null) return;
-    saveAs(img, 'card.png');
+    if (img == null || !props.cardData) return;
+    saveAs(img, props.cardData.name + '.png');
   };
 
   const onCopiedAlertClosed = () => {
