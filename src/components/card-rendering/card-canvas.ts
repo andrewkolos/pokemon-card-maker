@@ -21,7 +21,6 @@ const cardWidth = 747;
 const cardHeight = 1038;
 
 export class CardCanvas {
-
   private static ImageCache = new Map<string, HTMLImageElement>();
   private readonly canvas: HTMLCanvasElement;
 
@@ -78,6 +77,8 @@ export class CardCanvas {
         }
       }
 
+      lines.push(candidateLineWords.join(' '));
+
       const blockHeight = lineHeight * lines.length;
 
       lines.forEach((l, i) => {
@@ -96,7 +97,8 @@ export class CardCanvas {
     const promise = new Promise<void>((resolve) => {
       const fromCache = imageCache.get(imgSrc);
 
-      const imgEl = fromCache ||
+      const imgEl =
+        fromCache ||
         (() => {
           const value = document.createElement('img');
           value.src = imgSrc;

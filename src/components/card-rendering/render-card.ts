@@ -36,8 +36,8 @@ export async function renderCard(cardData?: Card): Promise<string> {
       text: cardData.effect,
       fontName: 'FuturaStd',
       fontSize: 48,
-      x: 17,
-      y: 250,
+      x: 50,
+      y: 500,
       maxWidth: 600,
       stroke: {
         color: 'white',
@@ -58,22 +58,6 @@ export async function renderCard(cardData?: Card): Promise<string> {
       },
     });
   }
-
-  canvas.drawImage(0, 0, 'img.png');
-
-  canvas.drawText({
-    color: 'black',
-    text: 'sample text',
-    fontName: 'FuturaStd',
-    fontSize: 48,
-    x: 17,
-    y: 250,
-    maxWidth: 300,
-    stroke: {
-      color: 'white',
-      width: 1,
-    },
-  });
 
   return await canvas.toDataURL();
 }

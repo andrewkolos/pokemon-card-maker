@@ -77,31 +77,37 @@ const Form: React.FC<FormProps> = (props) => {
   const [imgDataUrl, setImgDataUrl] = React.useState<string>();
   const [trainerType, setTrainerType] = React.useState('Item');
   const [isFullArt, setIsFullArt] = React.useState(false);
+  const [updated, setUpdated] = React.useState(false);
 
-  const broadcast = () => props.onChange({
-    series,
-    cardType,
-    stage,
-    prismStar,
-    gx,
-    pokemonType,
-    name,
-    hp,
-    weaknesses,
-    resistances,
-    retreatCost,
-    ability,
-    effect,
-    attacks,
-    setNumber,
-    rarity,
-    imagePath,
-    hasAbility,
-    imgDataUrl,
-    image: imgDataUrl,
-    trainerType,
-    isFullArt
-  } as any);
+  const broadcast = () => setUpdated(true);
+  useEffect(() => {
+    if (!updated) return;
+    props.onChange({
+      series,
+      cardType,
+      stage,
+      prismStar,
+      gx,
+      pokemonType,
+      name,
+      hp,
+      weaknesses,
+      resistances,
+      retreatCost,
+      ability,
+      effect,
+      attacks,
+      setNumber,
+      rarity,
+      imagePath,
+      hasAbility,
+      imgDataUrl,
+      image: imgDataUrl,
+      trainerType,
+      isFullArt
+    } as any);
+    setUpdated(false);
+  }, [updated]);
 
   return (
     <div className={classes.root}>
@@ -290,6 +296,7 @@ const Form: React.FC<FormProps> = (props) => {
           className={clsx(classes.formControl, classes.flex1)}
           label="Card text"
           value={effect}
+          onBlur={broadcast}
           onChange={(e) => setEffect(e.target.value)}
           multiline
           variant="outlined"
@@ -309,10 +316,16 @@ const Form: React.FC<FormProps> = (props) => {
 
         <CardImageSelector
           className={classes.formControl}
-          cardImageHeight={1038}
-          cardImageWidth={747}
-          onChange={(imageDataUrl) => setImgDataUrl(imageDataUrl)}
-          onComplete={(imageDataUrl) => setImgDataUrl(imageDataUrl)}
+          cardImageHeight={681}
+          cardImageWidth={983}
+          onChange={(imageDataUrl) => {
+            setImgDataUrl(imageDataUrl);
+            broadcast();
+          }}
+          onComplete={(imageDataUrl) => {
+            setImgDataUrl(imageDataUrl);
+            broadcast();
+          }}
         />
       </div>
     </div>
