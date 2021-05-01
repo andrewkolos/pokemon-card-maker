@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      width: '100%',
+      flexGrow: 1,
       wrap: 'none',
     },
     chooseButton: {

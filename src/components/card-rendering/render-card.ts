@@ -19,7 +19,7 @@ export async function renderCard(cardData?: Card): Promise<string> {
     const fullArt = cardData.fullArt;
 
     const template = prismStar ? 'SunMoonTrainers/Prism.png' : (trainerType == 'Stadium' ? 'SunMoonTrainers/Stadium.png' : (fullArt ? `SunMoonTrainers/${trainerType}FA.png` : `SunMoonTrainers/${trainerType}.png`));
-    canvas.drawImage(0,0,cardData.image);
+    if (cardData.image){canvas.drawImage(0,0,cardData.image);}
     canvas.drawImage(0,0,template);
     canvas.drawText({
       color: 'black',
@@ -28,7 +28,7 @@ export async function renderCard(cardData?: Card): Promise<string> {
       fontSize: 48,
       x: 17,
       y: 250,
-      maxWidth: 300,
+      maxWidth: 900,
       stroke: {
         color: 'white',
         width: 1
@@ -39,8 +39,8 @@ export async function renderCard(cardData?: Card): Promise<string> {
       text: cardData.name,
       fontName: 'FuturaStd',
       fontSize: 48,
-      x: 0,
-      y: 0,
+      x: 20,
+      y: 20,
       maxWidth: 300,
       stroke: {
         color: 'white',

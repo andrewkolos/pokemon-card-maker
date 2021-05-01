@@ -62,7 +62,7 @@ export const CardPreview: React.FC<CardPreviewProps> = (props) => {
 
   useEffect(() => {
     renderCard(props.cardData).then((value) => setImg(value));
-  }, []);
+  });
 
   return (
     <div className={classes.container}>
