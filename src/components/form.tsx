@@ -45,7 +45,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     imageSection: {
       display: 'flex',
-    }
+    },
   })
 );
 
@@ -104,7 +104,7 @@ const Form: React.FC<FormProps> = (props) => {
       imgDataUrl,
       image: imgDataUrl,
       trainerType,
-      isFullArt
+      isFullArt,
     } as any);
     setUpdated(false);
   }, [updated]);
@@ -113,10 +113,14 @@ const Form: React.FC<FormProps> = (props) => {
     <div className={classes.root}>
       <FormControl className={classes.formControl}>
         <InputLabel id="card-series-select-label">Card Series</InputLabel>
-        <Select labelId="card-series-select-label" value={series} onChange={(e) => {
-          setSeries(e.target.value as any);
-          broadcast();
-        }}>
+        <Select
+          labelId="card-series-select-label"
+          value={series}
+          onChange={(e) => {
+            setSeries(e.target.value as any);
+            broadcast();
+          }}
+        >
           <MenuItem value="sunmoon">Sun/Moon</MenuItem>
           <MenuItem value="diamondpearl">Diamond/Pearl</MenuItem>
           <MenuItem value="swordshield">Sword/Shield</MenuItem>
@@ -139,7 +143,13 @@ const Form: React.FC<FormProps> = (props) => {
         </Select>
       </FormControl>
 
-      <TextField className={classes.formControl} label="Name" onBlur={broadcast} onChange={(v) => setName(v.target.value)} value={name} />
+      <TextField
+        className={classes.formControl}
+        label="Name"
+        onBlur={broadcast}
+        onChange={(v) => setName(v.target.value)}
+        value={name}
+      />
 
       {cardType === CardType.Trainer && (
         <FormControl className={classes.formControl}>
@@ -162,10 +172,16 @@ const Form: React.FC<FormProps> = (props) => {
 
       {cardType === CardType.Trainer && trainerType === 'Supporter' && series === Series.SunMoon && (
         <FormControlLabel
-          control={<Checkbox checked={prismStar} onChange={(e) => {
-            setPrismStar(e.target.checked);
-            broadcast();
-          }} color="primary" />}
+          control={
+            <Checkbox
+              checked={prismStar}
+              onChange={(e) => {
+                setPrismStar(e.target.checked);
+                broadcast();
+              }}
+              color="primary"
+            />
+          }
           label="Prism Star"
         />
       )}
@@ -173,7 +189,14 @@ const Form: React.FC<FormProps> = (props) => {
       {cardType === CardType.Pokemon && (
         <FormControl className={classes.formControl}>
           <InputLabel id="stage-select-label">Stage</InputLabel>
-          <Select labelId="stage-select-label" value={stage} onChange={(e) => { setStage(e.target.value as any); broadcast() }}>
+          <Select
+            labelId="stage-select-label"
+            value={stage}
+            onChange={(e) => {
+              setStage(e.target.value as any);
+              broadcast();
+            }}
+          >
             <MenuItem value="basic">Basic</MenuItem>
             <MenuItem value="one">One</MenuItem>
             <MenuItem value="two">Two</MenuItem>
@@ -183,10 +206,16 @@ const Form: React.FC<FormProps> = (props) => {
 
       {cardType === CardType.Pokemon && stage === Stage.Basic && (
         <FormControlLabel
-          control={<Checkbox checked={prismStar} onChange={(e) => {
-            setPrismStar(e.target.checked);
-            broadcast();
-          }} color="primary" />}
+          control={
+            <Checkbox
+              checked={prismStar}
+              onChange={(e) => {
+                setPrismStar(e.target.checked);
+                broadcast();
+              }}
+              color="primary"
+            />
+          }
           label="Prism Star"
         />
       )}
@@ -195,7 +224,10 @@ const Form: React.FC<FormProps> = (props) => {
           className={classes.formControl}
           label="Type"
           value={pokemonType ? arrayify(pokemonType) : []}
-          onValueChanged={(v) => { setPokemonTypes(v[0]); broadcast(); }}
+          onValueChanged={(v) => {
+            setPokemonTypes(v[0]);
+            broadcast();
+          }}
         />
       )}
       {cardType === CardType.Pokemon && (
@@ -205,7 +237,10 @@ const Form: React.FC<FormProps> = (props) => {
           className={classes.formControl}
           label="Resistances"
           value={resistances}
-          onValueChanged={(v) => { setResistances(v); broadcast(); }}
+          onValueChanged={(v) => {
+            setResistances(v);
+            broadcast();
+          }}
         />
       )}
       {cardType === CardType.Pokemon && (
@@ -214,7 +249,10 @@ const Form: React.FC<FormProps> = (props) => {
           multiple
           className={classes.formControl}
           value={weaknesses}
-          onValueChanged={(v) => { setWeaknesses(v); broadcast(); }}
+          onValueChanged={(v) => {
+            setWeaknesses(v);
+            broadcast();
+          }}
         />
       )}
       {cardType === CardType.Pokemon && (
@@ -223,7 +261,10 @@ const Form: React.FC<FormProps> = (props) => {
           <Select
             labelId="retreat-cost-select-label"
             value={retreatCost}
-            onChange={(e) => { setRetreatCost(e.target.value as string); broadcast(); }}
+            onChange={(e) => {
+              setRetreatCost(e.target.value as string);
+              broadcast();
+            }}
           >
             <MenuItem value="0">None</MenuItem>
             <MenuItem value="1">1</MenuItem>
@@ -235,12 +276,26 @@ const Form: React.FC<FormProps> = (props) => {
         </FormControl>
       )}
       {cardType === CardType.Pokemon && (
-        <HpSelect label="HP" onChange={(v) => { setHp(v); broadcast(); }} className={classes.formControl} />
+        <HpSelect
+          label="HP"
+          onChange={(v) => {
+            setHp(v);
+            broadcast();
+          }}
+          className={classes.formControl}
+        />
       )}
       {cardType === CardType.Pokemon && (
         <FormControl className={classes.formControl}>
           <InputLabel id="gx-select-label">GX</InputLabel>
-          <Select labelId="gx-select-label" value={gx} onChange={(e) => { setGx(e.target.value as any); broadcast() }}>
+          <Select
+            labelId="gx-select-label"
+            value={gx}
+            onChange={(e) => {
+              setGx(e.target.value as any);
+              broadcast();
+            }}
+          >
             <MenuItem value="gx">GX</MenuItem>
             <MenuItem value="tagteamgx">Tag Team GX</MenuItem>
             <MenuItem value="neither">Neither</MenuItem>
@@ -254,8 +309,14 @@ const Form: React.FC<FormProps> = (props) => {
           <FormControlLabel
             className={clsx(classes.formControl, classes.abilityRow)}
             control={
-              <Checkbox checked={hasAbility} onChange={
-                (e) => { setHasAbility(e.target.checked); broadcast(); }} color="primary" />
+              <Checkbox
+                checked={hasAbility}
+                onChange={(e) => {
+                  setHasAbility(e.target.checked);
+                  broadcast();
+                }}
+                color="primary"
+              />
             }
             label="Has ability"
           />
@@ -280,7 +341,10 @@ const Form: React.FC<FormProps> = (props) => {
             multiline
             value={ability.text}
             onBlur={broadcast}
-            onChange={(e) => { setAbility({ ...ability, text: e.target.value }); broadcast(); }}
+            onChange={(e) => {
+              setAbility({ ...ability, text: e.target.value });
+              broadcast();
+            }}
           />
         </React.Fragment>
       )}
@@ -308,16 +372,14 @@ const Form: React.FC<FormProps> = (props) => {
       <div className={classes.imageSection}>
         <FormControlLabel
           className={clsx(classes.formControl)}
-          control={
-            <Checkbox checked={isFullArt} onChange={(e) => setIsFullArt(e.target.checked)} color="primary" />
-          }
+          control={<Checkbox checked={isFullArt} onChange={(e) => setIsFullArt(e.target.checked)} color="primary" />}
           label="Full Art"
         />
 
         <CardImageSelector
           className={classes.formControl}
-          cardImageHeight={681}
-          cardImageWidth={983}
+          cardImageHeight={1038}
+          cardImageWidth={747}
           onChange={(imageDataUrl) => {
             setImgDataUrl(imageDataUrl);
             broadcast();

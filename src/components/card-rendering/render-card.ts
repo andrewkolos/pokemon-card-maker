@@ -20,14 +20,14 @@ export async function renderCard(cardData?: Card): Promise<string> {
     const template = prismStar
       ? 'SunMoonTrainers/Prism.png'
       : trainerType == 'Stadium'
-      ? 'SunMoonTrainers/Stadium.png'
-      : fullArt
-      ? `SunMoonTrainers/${trainerType}FA.png`
-      : `SunMoonTrainers/${trainerType}.png`;
+        ? 'SunMoonTrainers/Stadium.png'
+        : fullArt
+          ? `SunMoonTrainers/${trainerType}FA.png`
+          : `SunMoonTrainers/${trainerType}.png`;
     if (cardData.image) {
       canvas.drawImage(0, 0, cardData.image);
     }
-    canvas.drawImage(0, 0, template);
+    //   canvas.drawImage(0, 0, template);
     canvas.drawText({
       color: 'black',
       wrap: {

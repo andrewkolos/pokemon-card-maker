@@ -43,15 +43,23 @@ const useStyles = makeStyles((theme: Theme) =>
     cropModal: {
       display: 'flex',
       alignItems: 'center',
+      overflow: 'scroll',
       justifyContent: 'center',
     },
     cropModalContent: {
       position: 'absolute',
-      overflow: 'hidden',
       backgroundColor: theme.palette.background.paper,
       border: `2px solid ${theme.palette.divider}`,
       boxShadow: theme.shadows[5],
       padding: theme.spacing(2, 4, 3),
+    },
+    saveButtonContainer: {
+      display: 'flex',
+      justifyContent: 'center',
+      width: '100%',
+    },
+    saveButton: {
+      minWidth: 200,
     },
   })
 );
@@ -76,7 +84,7 @@ export const CardImageSelector: React.FC<FileUploadProps> = (props) => {
   const [crop, setCrop] = useState<ReactCrop.Crop>({
     unit: '%',
     width: 50,
-    height: 50,
+    aspect: props.cardImageWidth / props.cardImageHeight,
   });
   const [saving, setSaving] = useState(false);
   const [cropDims, setCropDims] = useState<Dimension>();
@@ -90,6 +98,7 @@ export const CardImageSelector: React.FC<FileUploadProps> = (props) => {
       unit: '%',
       width: cropDims.width * 100,
       height: cropDims.height * 100,
+      aspect: props.cardImageWidth / props.cardImageHeight,
     });
   }, [cropDims]);
 
@@ -130,8 +139,11 @@ export const CardImageSelector: React.FC<FileUploadProps> = (props) => {
   const onSaveButtonClicked = () => {
     const img = new Image();
     img.onload = () => {
-      const result = getCroppedImg(img, crop);
-      props.onComplete(result);
+      const result = getCroppedImg(img, crop, {
+        width: props.cardImageWidth,
+        height: props.cardImageHeight,
+      });
+      if (props.onComplete) props.onComplete(result);
       setSaving(false);
       setModalOpen(false);
       onModalClosed();
@@ -170,15 +182,33 @@ export const CardImageSelector: React.FC<FileUploadProps> = (props) => {
           <h1> Crop image </h1>
           {resizedImg && cropDims && (
             <ReactCrop
-              locked
               ruleOfThirds
               crop={crop}
               src={resizedImg}
-              onChange={(_nextCrop, percentCrop) => setCrop(percentCrop)}
-              onImageLoaded={(target) => props.onChange && props.onChange(convertImgElToDataUrl(target))}
+              keepSelection
+              onChange={(_nextCrop, percentCrop) => {
+                const resized = cropDims.width * 100 > percentCrop.width!;
+                percentCrop.width = Math.max(percentCrop.width!, cropDims.width * 100);
+                percentCrop.height = Math.max(percentCrop.height!, cropDims.height * 100);
+                if (resized) {
+                  // hack
+                  percentCrop.x = crop.x;
+                  percentCrop.y = crop.y;
+                }
+                setCrop(percentCrop);
+              }}
             />
           )}
-          <Button onClick={() => onSaveButtonClicked()}>{saving ? 'Saving...' : 'Save'}</Button>
+          <div className={classes.saveButtonContainer}>
+            <Button
+              className={classes.saveButton}
+              variant="contained"
+              color="primary"
+              onClick={() => onSaveButtonClicked()}
+            >
+              {saving ? 'Saving...' : 'Save'}
+            </Button>
+          </div>
         </div>
       </Modal>
     </div>
@@ -189,7 +219,7 @@ export const CardImageSelector: React.FC<FileUploadProps> = (props) => {
  * @param {HTMLImageElement} image - Image File Object.
  * @param {String} fileName - Name of the returned file in Promise.
  */
-function getCroppedImg(image: HTMLImageElement, crop: ReactCrop.Crop): string {
+function getCroppedImg(image: HTMLImageElement, crop: ReactCrop.Crop, outputDims: Dimensions): string {
   if (!crop.width || !crop.height || crop.x == null || crop.y == null) {
     throw Error('Crop is missing a dimension.');
   }
@@ -208,7 +238,17 @@ function getCroppedImg(image: HTMLImageElement, crop: ReactCrop.Crop): string {
 
   if (!ctx) throw Error('Could not get context for image canvas');
 
-  ctx.drawImage(image, x * scaleX, y * scaleY, width * scaleX, height * scaleY, 0, 0, width, height);
+  ctx.drawImage(
+    image,
+    x * scaleX,
+    y * scaleY,
+    width * scaleX,
+    height * scaleY,
+    0,
+    0,
+    outputDims.width,
+    outputDims.height
+  );
   return canvas.toDataURL('image/jpeg');
 }
 //   return new Promise((resolve, reject) => {
