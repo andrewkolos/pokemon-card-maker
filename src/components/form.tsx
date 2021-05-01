@@ -24,7 +24,7 @@ import {
   GxType,
   PokemonCard,
   PokemonType,
-  TrainerCardBase,
+  TrainerCard,
   TrainerType,
 } from '../model/types';
 import { Attacks } from './attacks';
@@ -102,7 +102,7 @@ const Form: React.FC<FormProps> = (props) => {
     };
 
     if (cardType === CardType.Trainer && trainerType) {
-      const card: DeepPartial<TrainerCardBase> = {
+      const card: DeepPartial<TrainerCard> = {
         ...commonItems,
         ...{
           cardType,

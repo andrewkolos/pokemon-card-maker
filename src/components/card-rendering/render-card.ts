@@ -9,7 +9,6 @@ function isSunMoonTrainerCard(card: object): card is SunMoonTrainerCard {
 
 export async function renderCard(cardData?: DeepPartial<Card>): Promise<string> {
   const canvas = new CardCanvas();
-
   if (cardData === undefined) {
   } else if (isSunMoonTrainerCard(cardData)) {
     // find template

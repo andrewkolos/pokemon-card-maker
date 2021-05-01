@@ -31,9 +31,6 @@ export class CardCanvas {
     this.canvas = document.createElement('canvas');
     this.canvas.width = cardWidth;
     this.canvas.height = cardHeight;
-    const context = this.canvas.getContext('2d')!;
-    context.fillStyle = '#cdcdcd';
-    context.fillRect(0, 0, context.canvas.width, context.canvas.height);
   }
 
   public async drawText(args: RenderTextArgs): Promise<number> {
