@@ -31,6 +31,7 @@ import { Attacks } from './attacks';
 import { CardImageSelector } from './card-image-selector';
 import { PokemonTypeSelect } from './pokemon-type-select';
 import { Energy } from '../model/energy';
+import { Alert } from '@material-ui/lab';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -146,7 +147,7 @@ const Form: React.FC<FormProps> = (props) => {
       props.onChange(card);
     }
     setUpdated(false);
-  }, [updated]);
+  });
 
   return (
     <div className={classes.root}>
@@ -276,7 +277,7 @@ const Form: React.FC<FormProps> = (props) => {
           canPickNone
           className={classes.formControl}
           label="Resistances"
-          value={resistance ? [resistance] : undefined}
+          value={resistance ? [resistance] : []}
           onValueChanged={(v) => {
             setResistance(v[0]);
             broadcast();
@@ -390,6 +391,12 @@ const Form: React.FC<FormProps> = (props) => {
       )}
 
       <div className={classes.break}></div>
+
+      {cardType === CardType.Pokemon && gxType !== '' && (
+        <Alert className={clsx(classes.formControl, classes.flex1)} style={{ marginBottom: '0' }} severity="info">
+          The last non-blank attack given below will be the GX attack.
+        </Alert>
+      )}
 
       {cardType === CardType.Pokemon && (
         <Attacks

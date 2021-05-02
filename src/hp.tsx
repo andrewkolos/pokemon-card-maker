@@ -21,13 +21,12 @@ export interface HpSelectProps {
 }
 
 export const HpSelect: React.FC<HpSelectProps> = (props) => {
-  const [value, setValue] = useState(props.value ? String(props.value) : undefined);
+  const [value, setValue] = useState(props.value ? String(props.value) : '');
   const classes = useStyles();
 
   return (
     <FormControl className={clsx(classes.root, props.className)}>
       <Autocomplete
-        id="combo-box-demo"
         options={hpList}
         renderInput={(params) => (
           <TextField

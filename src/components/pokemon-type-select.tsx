@@ -15,7 +15,7 @@ export interface PokemonTypeSelectProps {
 }
 
 export const PokemonTypeSelect: React.FC<PokemonTypeSelectProps> = (props) => {
-  const [selectedValues, setSelectedValues] = useState<PokemonType[]>(props.value ? props.value : []);
+  const [selectedValues, setSelectedValues] = useState<PokemonType[]>(props.value ? props.value : '');
   const excludedValues = new Set(props.exclude);
   return (
     <FormControl className={props.className}>
@@ -40,14 +40,7 @@ export const PokemonTypeSelect: React.FC<PokemonTypeSelectProps> = (props) => {
         }}
       >
         {props.canPickNone && (
-          <MenuItem
-            value=""
-            key=""
-            onSelect={(e) => {
-              setSelectedValues([]);
-              e.preventDefault();
-            }}
-          >
+          <MenuItem value="" key="">
             None
           </MenuItem>
         )}

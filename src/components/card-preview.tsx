@@ -10,6 +10,7 @@ import { Card } from '../model/types';
 import { GlassMagnifier } from 'react-image-magnifiers';
 import { Theme } from '@material-ui/core';
 import clsx from 'clsx';
+import { DeepPartial } from '../util';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -43,7 +44,7 @@ declare class ClipboardItem {
 }
 
 export interface CardPreviewProps {
-  cardData?: Partial<Card>;
+  cardData?: DeepPartial<Card>;
 }
 
 export const CardPreview: React.FC<CardPreviewProps> = (props) => {

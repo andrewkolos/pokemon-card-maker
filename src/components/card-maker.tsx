@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { CardPreview } from './card-preview';
 import Form from './form';
 import { Card } from '../model/types';
+import { DeepPartial } from '../util';
 
 const useStyles = makeStyles({
   formContainer: {
@@ -25,14 +26,18 @@ const useStyles = makeStyles({
 });
 
 export const CardMaker: React.FC = () => {
-  const [cardData, setCardData] = useState<Card>();
+  const [cardData, setCardData] = useState<DeepPartial<Card>>();
   const classes = useStyles();
 
   return (
     <Container>
       <div className={classes.contentContainer}>
         <div className={classes.formContainer}>
-          <Form onChange={(card) => setCardData(card)} />
+          <Form
+            onChange={(card) => {
+              setCardData(card);
+            }}
+          />
         </div>
         <div className={classes.previewContainer}>
           <CardPreview cardData={cardData} />
