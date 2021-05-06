@@ -1,14 +1,13 @@
-import { Wrap } from 'mdi-material-ui';
+import { FontFamily } from '../../font-family';
 import { calculateAspectRatioFit } from './calculate-card-aspect-ratio-fit';
 
 export interface RenderTextArgs {
   x: number;
   y: number;
   text: string;
-  fontName: string;
-  fontSize: number;
   color: string;
   maxWidth: number;
+  font: Font;
   stroke?: {
     color: string;
     width: number;
@@ -16,6 +15,14 @@ export interface RenderTextArgs {
   wrap?: {
     baseline: 'top' | 'bottom',
   }
+}
+
+export interface Font {
+  style?: unknown; // to be implemented.
+  weight?: 'bold';
+  stretch?: 'condensed',
+  size: number,
+  family: FontFamily,
 }
 
 const cardWidth = 747;
@@ -36,15 +43,12 @@ export class CardCanvas {
   public async drawText(args: RenderTextArgs): Promise<number> {
     await this.awaitPendingOperations();
 
-
-    // TODO: narrow type of fontName to a specific set of names.
     const ctx = this.canvas.getContext('2d')!;
 
     ctx.fillStyle = 'darkred';
     ctx.fillRect(args.x, args.y, args.maxWidth, 3);
 
-
-    ctx.font = `${args.fontSize}px ${args.fontName}`;
+    ctx.font = buildFontString();
     if (args.stroke) {
       ctx.strokeStyle = args.stroke.color;
       ctx.lineWidth = args.stroke.width;
@@ -62,6 +66,14 @@ export class CardCanvas {
       ctx.fillText(args.text, args.x, args.y, args.maxWidth);
       ctx.strokeText(args.text, args.x, args.y, args.maxWidth);
       return lineHeight;
+    }
+
+    function buildFontString() {
+      return `${opt(args.font.weight)}${opt(args.font.stretch)}${args.font.size}px ${args.font.family}`;
+
+      function opt(str?: string) {
+        return str ? (str + ' ') : '';
+      }
     }
 
     function renderMultilineText(): number {
@@ -143,6 +155,21 @@ export class CardCanvas {
     });
 
     this.pendingOperations.push(promise);
+  }
+
+  /**
+   * @param x X-coordinate of center.
+   * @param y Y-coordinate of center.
+   */
+  public drawCircle(x: number, y: number, radius: number, color: string) {
+    this.awaitPendingOperations();
+
+    const ctx = this.canvas.getContext('2d')!;
+    ctx.arc(x, y, radius, 0, 2 * Math.PI);
+    ctx.fillStyle = color;
+    ctx.strokeStyle = color;
+    ctx.stroke();
+    ctx.fill();
   }
 
   public async toDataURL(): Promise<string> {

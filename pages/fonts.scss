@@ -1,4 +1,40 @@
 @font-face {
-  font-family: FuturaStd;
+  font-family: Futura;
   src: url('../public/fonts/FuturaStd-Book.otf');
+}
+
+@font-face {
+  font-family: Gill Sans;
+  src: url('../public/fonts/GillSansStd.otf');
+}
+
+@font-face {
+  font-family: Gill Sans;
+  src: url('../public/fonts/GillSansStd-Bold.otf');
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: Gill Sans;
+  src: url('../public/fonts/GillSansStd-BoldCondensed.otf');
+  font-weight: bold;
+  font-stretch: condensed;
+}
+
+@font-face {
+  font-family: Gill Sans;
+  src: url('../public/fonts/GillSansStd-Condensed.otf');
+  font-stretch: condensed;
+}
+
+@font-face {
+  font-family: Gill Sans;
+  src: url('../public/fonts/GillSansStd-Italic.otf');
+  font-style: italic;
+}
+
+@font-face {
+  font-family: Gill Sans;
+  src: url('../public/fonts/GillSansStd-ExtraBold.otf');
+  font-weight: bolder;
 }

@@ -10,6 +10,7 @@ import Image from 'next/image';
 
 import './fonts.scss';
 import { blue, lightBlue } from '@material-ui/core/colors';
+import { FontFamily } from '../src/font-family';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -23,7 +24,7 @@ const useStyles = makeStyles((theme: Theme) =>
     appBarText: {
       display: 'flex',
       margin: 'auto',
-      fontFamily: 'FuturaStd',
+      fontFamily: FontFamily.Futura,
     },
     footer: {
       marginTop: '3rem',
@@ -82,7 +83,7 @@ export default function App(props: AppProps) {
       <AppBar position="static" className={classes.appBar}>
         <Toolbar className={classes.toolBar}>
           <div style={{ display: 'none', alignContent: 'center' }}></div>
-          <Image src="/logo.png" width="24" height="32" />
+          <Image src="/icon-white.png" width="32" height="32" />
           <Typography className={classes.appBarText} variant="h6">
             Pokemon Card Maker
           </Typography>

@@ -1,3 +1,4 @@
+import { FontFamily } from '../../font-family';
 import { Card, SunMoonTrainerCard, TrainerType } from '../../model/types';
 import { DeepPartial } from '../../util';
 import { CardCanvas } from './card-canvas';
@@ -33,21 +34,27 @@ export async function renderCard(cardData?: DeepPartial<Card>): Promise<string> 
         baseline: 'top',
       },
       text: cardData.effect,
-      fontName: 'FuturaStd',
-      fontSize: 24,
+      font: {
+        family: FontFamily.GillSans,
+        size: 24,
+      },
       x: 70,
       y: 600,
       maxWidth: 600,
       stroke: {
         color: 'white',
-        width: 1,
+        width: 0.75,
       },
     });
     canvas.drawText({
       color: 'black',
       text: cardData.name,
-      fontName: 'FuturaStd',
-      fontSize: 48,
+      font: {
+        family: FontFamily.GillSans,
+        weight: 'bold',
+        stretch: 'condensed',
+        size: 48,
+      },
       x: 40,
       y: 125,
       maxWidth: 800,
@@ -56,6 +63,7 @@ export async function renderCard(cardData?: DeepPartial<Card>): Promise<string> 
         width: 1,
       },
     });
+
   }
 
   return await canvas.toDataURL();
