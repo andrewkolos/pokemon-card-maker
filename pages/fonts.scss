@@ -38,3 +38,40 @@
   src: url('../public/fonts/GillSansStd-ExtraBold.otf');
   font-weight: bolder;
 }
+
+@font-face {
+  font-family: Humanist;
+  src: url('../public/fonts/Humanist.ttf');
+}
+
+@font-face {
+  font-family: Humanist;
+  src: url('../public/fonts/Humanist-Bold.ttf');
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: Humanist;
+  src: url('../public/fonts/Humanist-BoldCondensed.ttf');
+  font-weight: bold;
+  font-stretch: condensed;
+}
+
+@font-face {
+  font-family: Humanist;
+  src: url('../public/fonts/Humanist-BoldItalic.ttf');
+  font-weight: bold;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: Humanist;
+  src: url('../public/fonts/Humanist-Condensed.ttf');
+  font-stretch: condensed;
+}
+
+@font-face {
+  font-family: Humanist;
+  src: url('../public/fonts/Humanist-Italic.ttf');
+  font-style: italic;
+}
