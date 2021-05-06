@@ -103,7 +103,9 @@ export default function App(props: AppProps) {
       <Head>
         <meta name="theme-color" content={theme.palette.primary.main} />
         <title>Pokemon Card Maker</title>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="shortcut iron" type="image/png" href="/icon.png" />
+        <link rel="shortcut icon" sizes="192x192" href="/icon.png" />
+        <link rel="apple-touch-icon" href="/img/icon.png" />
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
       </Head>
 
