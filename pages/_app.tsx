@@ -1,38 +1,44 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Head from 'next/head';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import { createMuiTheme, ThemeProvider, Tooltip } from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { AppProps } from 'next/dist/next-server/lib/router/router';
-import { AppBar, Toolbar, Typography } from '@material-ui/core';
-import { makeStyles } from '@material-ui/styles';
+import { AppBar, createStyles, Theme, Toolbar, Typography, makeStyles } from '@material-ui/core';
 import { WeatherNight, WhiteBalanceSunny } from 'mdi-material-ui';
+import Image from 'next/image';
 
 import './fonts.scss';
+import { blue, lightBlue } from '@material-ui/core/colors';
 
-const useStyles = makeStyles({
-  appBar: {
-    marginBottom: '10px',
-  },
-  toolBar: {
-    display: 'flex',
-    justifyContent: 'space-between',
-  },
-  appBarText: {
-    display: 'inline',
-    margin: 'auto',
-    fontFamily: 'FuturaStd',
-  },
-  footer: {
-    marginTop: '3rem',
-    paddingTop: '0.5rem',
-    borderTop: '1px solid #dddddd',
-    textAlign: 'center',
-  },
-  darkModeToggleButton: {
-    cursor: 'pointer',
-  },
-});
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    appBar: {
+      marginBottom: '10px',
+    },
+    toolBar: {
+      display: 'flex',
+      justifyContent: 'space-between',
+    },
+    appBarText: {
+      display: 'flex',
+      margin: 'auto',
+      fontFamily: 'FuturaStd',
+    },
+    footer: {
+      marginTop: '3rem',
+      paddingTop: '0.5rem',
+      borderTop: '1px solid #dddddd',
+      textAlign: 'center',
+    },
+    darkModeToggleButton: {
+      cursor: 'pointer',
+    },
+    logo: {
+      marginRight: theme.spacing(5),
+    },
+  })
+);
 
 const darkModeStorageKey = 'dark_mode';
 
@@ -57,6 +63,12 @@ export default function App(props: AppProps) {
   const theme = createMuiTheme({
     palette: {
       type: darkMode ? 'dark' : 'light',
+      primary: {
+        main: blue[800],
+      },
+      secondary: {
+        main: lightBlue[600],
+      },
     },
   });
 
@@ -69,19 +81,22 @@ export default function App(props: AppProps) {
 
       <AppBar position="static" className={classes.appBar}>
         <Toolbar className={classes.toolBar}>
-          <div style={{ display: 'none' }}></div>
+          <div style={{ display: 'none', alignContent: 'center' }}></div>
+          <Image src="/logo.png" width="24" height="32" />
           <Typography className={classes.appBarText} variant="h6">
             Pokemon Card Maker
           </Typography>
-          <div
-            className={classes.darkModeToggleButton}
-            onClick={() => {
-              setDarkMode(!darkMode);
-              localStorage.setItem(darkModeStorageKey, String(!darkMode));
-            }}
-          >
-            {darkMode ? <WeatherNight /> : <WhiteBalanceSunny />}
-          </div>
+          <Tooltip title={darkMode ? 'Change to light theme' : 'Change to dark theme'}>
+            <div
+              className={classes.darkModeToggleButton}
+              onClick={() => {
+                setDarkMode(!darkMode);
+                localStorage.setItem(darkModeStorageKey, String(!darkMode));
+              }}
+            >
+              {darkMode ? <WeatherNight /> : <WhiteBalanceSunny />}
+            </div>
+          </Tooltip>
         </Toolbar>
       </AppBar>
 
